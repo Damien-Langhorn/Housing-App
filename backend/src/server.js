@@ -21,7 +21,7 @@ connectDB().then(() => {
 // Middleware to parse JSON requests
 app.use(
   cors({
-    origin: "http://localhost:3001", // Adjust this to your frontend URL
+    origin: "http://localhost:3000", // Adjust this to your frontend URL
   })
 );
 

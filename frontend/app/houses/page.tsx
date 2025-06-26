@@ -27,7 +27,9 @@ const Page = () => {
   useEffect(() => {
     const getHouses = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/houses");
+        const res = await axios.get(
+          "https://housing-app-qgae.onrender.com/api/houses"
+        );
         console.log("Houses fetched successfully:", res.data);
         // You can process the fetched data here
         setHouses(res.data);

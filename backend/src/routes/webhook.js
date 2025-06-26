@@ -19,8 +19,8 @@ router.post(
         await User.create({
           clerk_id: id,
           email: email_addresses[0]?.email_address,
-          username: username,
-          password: password, // or leave blank/null if not used
+          username: username || email_addresses[0]?.email_address || id, // Fallback to email or ID if username not provided
+          password: "clerk", // or leave blank/null if not used
         });
         console.log(
           "New Clerk user saved to DB:",

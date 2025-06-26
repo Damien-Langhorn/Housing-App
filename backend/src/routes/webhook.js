@@ -1,5 +1,6 @@
-import { verifyWebhook } from "@clerk/express/webhooks";
 import express from "express";
+import { verifyWebhook } from "@clerk/express/webhooks";
+import User from "../models/User.js"; // Adjust the path as needed
 
 const router = express.Router();
 
@@ -8,21 +9,32 @@ router.post(
   express.raw({ type: "application/json" }),
   async (req, res) => {
     try {
-      const evt = await verifyWebhook(req);
-
-      // Do something with payload
-      // For this guide, log payload to console
-      const { id } = evt.data;
-      const eventType = evt.type;
-      console.log(
-        `Received webhook with ID ${id} and event type of ${eventType}`
+      const event = await verifyWebhook(
+        req,
+        process.env.CLERK_WEBHOOK_SIGNING_SECRET
       );
-      console.log("Webhook payload:", evt.data);
 
-      return res.send("Webhook received");
+      if (event.type === "user.created") {
+        const { id, email_addresses, username } = event.data;
+        await User.create({
+          clerk_id: id,
+          email: email_addresses[0]?.email_address,
+          username,
+          password: "clerk", // or leave blank/null if not used
+        });
+        console.log(
+          "New Clerk user saved to DB:",
+          id,
+          email_addresses,
+          username
+        );
+      }
+
+      console.log("Received Clerk webhook:", event.type, event.data);
+      res.status(200).send("Webhook received");
     } catch (err) {
       console.error("Error verifying webhook:", err);
-      return res.status(400).send("Error verifying webhook");
+      res.status(400).send("Error verifying webhook");
     }
   }
 );

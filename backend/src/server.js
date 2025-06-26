@@ -24,9 +24,11 @@ app.use(
     origin: "http://localhost:3001", // Adjust this to your frontend URL
   })
 );
+
+app.use("/api", webhookRouter);
+
 app.use(express.json());
 app.use(rateLimiter);
 
 app.use("/api/houses", houseRoutes);
 app.use("/api/user", userRoutes);
-app.use("/api", webhookRouter);

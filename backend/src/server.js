@@ -18,14 +18,14 @@ connectDB().then(() => {
   });
 });
 
+app.use("/api", webhookRouter);
+
 // Middleware to parse JSON requests
 app.use(
   cors({
     origin: "http://localhost:3000", // Adjust this to your frontend URL
   })
 );
-
-app.use("/api", webhookRouter);
 
 app.use(express.json());
 app.use(rateLimiter);

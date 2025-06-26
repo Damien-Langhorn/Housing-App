@@ -10,11 +10,11 @@ import cors from "cors";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log("Server is running on http://localhost:", PORT);
+    console.log("Server is running on ", PORT);
   });
 });
 
@@ -29,4 +29,4 @@ app.use(rateLimiter);
 
 app.use("/api/houses", houseRoutes);
 app.use("/api/user", userRoutes);
-app.use("https://fresh-bug-beloved.ngrok-free.app/api/", webhookRouter);
+app.use("https://housing-app-qgae.onrender.com/api/", webhookRouter);

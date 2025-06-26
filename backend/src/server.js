@@ -29,4 +29,4 @@ app.use(rateLimiter);
 
 app.use("/api/houses", houseRoutes);
 app.use("/api/user", userRoutes);
-app.use("https://housing-app-qgae.onrender.com/api/", webhookRouter);
+app.use("/api", webhookRouter);

@@ -29,6 +29,5 @@ app.use("/api", webhookRouter);
 
 app.use(express.json());
 app.use(rateLimiter);
-
 app.use("/api/houses", houseRoutes);
 app.use("/api/user", userRoutes);

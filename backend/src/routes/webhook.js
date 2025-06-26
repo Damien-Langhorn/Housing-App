@@ -15,12 +15,12 @@ router.post(
       );
 
       if (event.type === "user.created") {
-        const { id, email_addresses, username } = event.data;
+        const { id, email_addresses, username, password } = event.data;
         await User.create({
           clerk_id: id,
           email: email_addresses[0]?.email_address,
-          username,
-          password: "clerk", // or leave blank/null if not used
+          username: username,
+          password: password, // or leave blank/null if not used
         });
         console.log(
           "New Clerk user saved to DB:",

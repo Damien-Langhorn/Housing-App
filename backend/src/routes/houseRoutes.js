@@ -10,6 +10,8 @@ import { requireAuth } from "../middleware/clerk.js";
 import { upload } from "../server.js";
 
 const router = express.Router();
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" }); // Set the destination for uploaded files
 
 // Define routes for notes
 

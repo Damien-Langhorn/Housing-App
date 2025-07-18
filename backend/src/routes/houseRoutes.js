@@ -7,7 +7,7 @@ import {
   getHouseById,
 } from "../controllers/houseControllers.js";
 import { requireAuth } from "../middleware/clerk.js";
-import { upload } from "../server.js";
+import multer from "multer";
 
 const router = express.Router();
 const multer = require("multer");

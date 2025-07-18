@@ -28,17 +28,6 @@ app.use(
   })
 );
 
-// Initialize multer for file uploads
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Directory to save uploaded files
-  },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname); // Append timestamp to the original filename
-  },
-});
-export const upload = multer({ storage: storage });
-
 app.use(express.json());
 app.use(rateLimiter);
 app.use("/api/houses", houseRoutes);

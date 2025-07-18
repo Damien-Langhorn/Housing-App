@@ -29,7 +29,7 @@ export async function getHouseById(req, res) {
   }
 }
 
-export async function createHouse(_, res) {
+export async function createHouse(req, res) {
   try {
     const {
       address,

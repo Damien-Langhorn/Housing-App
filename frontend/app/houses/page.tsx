@@ -23,13 +23,13 @@ const Page = () => {
   const { userId } = useAuth();
   const [houses, setHouses] = useState<House[]>([]);
   const [loading, setLoading] = useState(true);
+  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
   useEffect(() => {
     const getHouses = async () => {
       try {
-        const res = await axios.get(
-          "https://housing-app-qgae.onrender.com/api/houses"
-        );
+        console.log("Fetching houses from:", DATABASE_URL);
+        const res = await axios.get(`${DATABASE_URL}/api/houses`);
         console.log("Houses fetched successfully:", res.data);
         // You can process the fetched data here
         setHouses(res.data);
@@ -41,7 +41,7 @@ const Page = () => {
     };
     // Call the function to fetch houses
     getHouses();
-  }, []);
+  }, [DATABASE_URL]);
 
   // Filter houses based on the userId
   // If userId is present, exclude houses associated with that user

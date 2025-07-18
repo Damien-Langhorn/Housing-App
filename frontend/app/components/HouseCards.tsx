@@ -13,6 +13,7 @@ export type House = {
   bathrooms: number;
   square_feet: number;
   address: string;
+  postal_code: string;
   year_built: number;
 };
 
@@ -25,7 +26,7 @@ const HouseCards = ({ house }: HouseCardsProps) => {
     <div className="flex justify-center items-center p-4">
       <div className="card bg-base-100 w-96 shadow-sm">
         <Link href={`/houses/${house._id}`}>
-          <Image width={500} height={500} src={house.image} alt="House Image" />
+          <Image src={house.image} width={500} height={500} alt="House Image" />
         </Link>
         <div className="card-body">
           <h2 className="card-title">
@@ -37,7 +38,9 @@ const HouseCards = ({ house }: HouseCardsProps) => {
             {house.bathrooms} {house.bathrooms === 1 ? "Bathroom" : "Bathrooms"}{" "}
             | {house.square_feet} sqft
           </p>
-          <p>{house.address}</p>
+          <p>
+            {house.address}, {house.postal_code}
+          </p>
           <p>Year Built: {house.year_built}</p>
         </div>
       </div>

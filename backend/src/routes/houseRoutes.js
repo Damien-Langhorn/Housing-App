@@ -7,6 +7,7 @@ import {
   getHouseById,
 } from "../controllers/houseControllers.js";
 import { requireAuth } from "../middleware/clerk.js";
+import { upload } from "../server.js";
 
 const router = express.Router();
 
@@ -14,7 +15,7 @@ const router = express.Router();
 
 router.get("/", getHouses);
 router.get("/:id", getHouseById); // Assuming you want to fetch a specific house by ID
-router.post("/", requireAuth, createHouse);
+router.post("/", upload.single("image"), requireAuth, createHouse);
 router.put("/:id", requireAuth, updateHouse);
 router.delete("/:id", requireAuth, deleteHouse);
 

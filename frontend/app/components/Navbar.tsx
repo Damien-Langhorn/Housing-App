@@ -49,7 +49,7 @@ const Navbar = () => {
                   <UserButton.Link
                     label="Messages"
                     labelIcon={<ChatBubbleLeftRightIcon />}
-                    href="/homes"
+                    href="/messages"
                   />
                   <UserButton.Action label="manageAccount" />
                   <UserButton.Action label="signOut" />

@@ -6,6 +6,18 @@ import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
 import rateLimiter from "./middleware/rateLimiter.js";
 import cors from "cors";
+import multer from "multer";
+
+// Initialize multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "uploads/"); // Directory to save uploaded files
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname); // Append timestamp to the original filename
+  },
+});
+export const upload = multer({ storage: storage });
 
 dotenv.config();
 

@@ -4,6 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import HouseCards from "../components/HouseCards";
 import { useAuth } from "@clerk/nextjs";
+import AddHouseModal from "../components/AddHouseModal";
 
 type House = {
   user_id: string;
@@ -16,6 +17,7 @@ type House = {
   bathrooms: number;
   square_feet: number;
   address: string;
+  postal_code: string;
   year_built: number;
 };
 
@@ -23,15 +25,15 @@ const Page = () => {
   const { userId } = useAuth();
   const [houses, setHouses] = useState<House[]>([]);
   const [loading, setLoading] = useState(true);
+  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
   useEffect(() => {
     if (!userId) setLoading(false);
 
     const getUserHouses = async () => {
-      //const userId = await axios.get("http://localhost:3000/api/user");
       try {
         const res = await axios.get(
-          `http://localhost:3000/api/user/${userId}/houses`
+          `${DATABASE_URL}/api/user/${userId}/houses`
         );
         console.log("Houses fetched successfully:", res.data);
         // You can process the fetched data here
@@ -44,7 +46,41 @@ const Page = () => {
     };
     // Call the function to fetch houses
     getUserHouses();
-  }, [userId]);
+  }, [userId, DATABASE_URL]);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const { getToken } = useAuth();
+
+  const handleAddHouse = async (houseData) => {
+    const token = await getToken();
+    if (!token) {
+      console.error("User is not authenticated.");
+      return;
+    }
+    console.log("Adding house with data:", houseData);
+    console.log("Token:", token);
+
+    try {
+      const res = await axios.post(`${DATABASE_URL}/api/houses`, houseData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      console.log("House added successfully:", res.data);
+      // Optionally, you can show a success message to the user
+      // and refresh the house list or update the state directly
+      setHouses((prevHouses) => [...prevHouses, res.data]);
+    } catch (error) {
+      console.error("Error adding house:", error);
+      // Optionally, you can show an error message to the user
+      return;
+    }
+
+    setIsModalOpen(false);
+    setLoading(true);
+  };
 
   return (
     <section className="min-h-screen overflow-hidden">
@@ -63,15 +99,41 @@ const Page = () => {
                 </p>
               </div>
             ) : houses.length === 0 ? (
-              <div className="col-span-full flex justify-center items-center">
+              <div className="col-span-full flex justify-center items-center flex-col">
                 <p className="text-center text-gray-500">
                   You have no houses listed.
                 </p>
+                <button
+                  onClick={() => setIsModalOpen(true)} // <-- Only open modal
+                  className="btn btn-neutral mt-4"
+                >
+                  Add a House
+                </button>
+                <AddHouseModal
+                  isOpen={isModalOpen}
+                  onClose={() => setIsModalOpen(false)}
+                  onSubmit={handleAddHouse}
+                />
               </div>
             ) : (
-              houses.map((house) => (
-                <HouseCards key={house._id} house={house} />
-              ))
+              <>
+                <div className="col-span-full flex justify-center items-center flex-col mb-8">
+                  <button
+                    onClick={() => setIsModalOpen(true)} // <-- Only open modal
+                    className="btn btn-neutral mt-4"
+                  >
+                    Add a House
+                  </button>
+                </div>
+                <AddHouseModal
+                  isOpen={isModalOpen}
+                  onClose={() => setIsModalOpen(false)}
+                  onSubmit={handleAddHouse}
+                />
+                {houses.map((house) => (
+                  <HouseCards key={house._id} house={house} />
+                ))}
+              </>
             )}
           </div>
         )}

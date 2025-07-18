@@ -5,19 +5,19 @@ import { useParams } from "next/navigation";
 import axios from "axios";
 import type { House } from "@/app/components/HouseCards";
 import Image from "next/image";
-// ...existing code...
+import { useAuth } from "@clerk/nextjs";
 
 const Page = () => {
+  const { userId } = useAuth();
   const { id } = useParams();
   const [house, setHouse] = useState<House>();
   const [loading, setLoading] = useState(true);
+  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
   useEffect(() => {
     const fetchHouse = async () => {
       try {
-        const res = await axios.get(
-          `https://housing-app-qgae.onrender.com/api/houses/${id}`
-        );
+        const res = await axios.get(`${DATABASE_URL}/api/houses/${id}`);
         console.log("House fetched successfully:", res.data);
         setHouse(res.data);
       } catch (error) {
@@ -27,7 +27,7 @@ const Page = () => {
       }
     };
     if (id) fetchHouse();
-  }, [id]);
+  }, [id, DATABASE_URL]);
 
   if (loading)
     return (
@@ -42,8 +42,17 @@ const Page = () => {
       </div>
     );
 
+  const handleContactSeller = () => {
+    // Logic to handle contacting the seller, e.g., opening a contact form or redirecting
+    console.log("Contacting seller for house:", house._id);
+    if (!userId) {
+      alert("Please sign in to contact the seller.");
+      return;
+    }
+  };
+
   return (
-    <section className="min-h-screen flex justify-center overflow-hidden">
+    <section className="min-h-screen flex justify-center overflow-hidden flex-col items-center">
       <div className="container flex flex-col md:flex-row justify-evenly items-center">
         <div className="flex justify-center items-center text-center w-[50vw]">
           <Image
@@ -64,9 +73,20 @@ const Page = () => {
             {house.bathrooms} {house.bathrooms === 1 ? "Bathroom" : "Bathrooms"}{" "}
             | {house.square_feet} sqft
           </p>
-          <p className="mb-2">{house.address}</p>
+          <p className="mb-2">
+            {house.address}, {house.postal_code}
+          </p>
           <p>Year Built: {house.year_built}</p>
         </div>
+      </div>
+
+      <div className="container mt-10 text-center">
+        <p>
+          Please contact the seller below if you are interested in this house.
+        </p>
+        <button onClick={handleContactSeller} className="btn btn-accent mt-4">
+          Contact Seller
+        </button>
       </div>
     </section>
   );

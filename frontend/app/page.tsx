@@ -16,12 +16,23 @@ export default function Home() {
           className="rounded-lg shadow-2xl shadow-base-content lg:w-[50vw]"
         />
         <div className="text-center text-balance lg:w-[50vw]">
-          <h1 className="text-5xl font-bold">Box Office News!</h1>
-          <p className="py-6">
-            Provident cupiditate voluptatem et in. Quaerat fugiat ut assumenda
-            excepturi exercitationem quasi. In deleniti eaque aut repudiandae et
-            a id nisi.
-          </p>
+          <h1 className="text-3xl sm:text-5xl font-bold py-6">
+            Find the{" "}
+            <span className="italic bg-gradient-to-r from-amber-900 via-yellow-600 to-amber-900 bg-clip-text text-transparent">
+              House
+            </span>
+            <br />
+            of Your{" "}
+            <span className="italic bg-gradient-to-r from-amber-900 via-yellow-600 to-amber-900 bg-clip-text text-transparent">
+              Dreams{" "}
+            </span>{" "}
+            with <br />
+            <span className="italic bg-gradient-to-r from-amber-900 via-yellow-600 to-amber-900 bg-clip-text text-transparent">
+              Affordable
+            </span>{" "}
+            Prices
+          </h1>
+
           <Link href={"/houses"} className="btn btn-primary">
             Get Started
           </Link>

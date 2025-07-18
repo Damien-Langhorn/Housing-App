@@ -8,47 +8,47 @@ const houseSchema = new mongoose.Schema(
     },
     address: {
       type: String,
-      required: true,
+      //required: true,
     },
     city: {
       type: String,
-      required: true,
+      //required: true,
     },
     state: {
       type: String,
-      required: true,
+      //required: true,
     },
     postal_code: {
       type: String,
-      required: true,
+      //required: true,
     },
     price: {
       type: Number,
-      required: true,
+      //required: true,
     },
     bedrooms: {
       type: Number,
-      required: true,
+      //required: true,
     },
     bathrooms: {
       type: Number,
-      required: true,
+      //required: true,
     },
     square_feet: {
       type: Number,
-      required: true,
+      //required: true,
     },
     year_built: {
       type: Number,
-      required: true,
+      //required: true,
     },
     image_url: {
       type: String,
-      required: true,
+      //required: true,
     },
     clerk_id: {
       type: String,
-      required: true,
+      //required: true,
       unique: true, // Assuming this is the Clerk user ID
       ref: "User", // Reference to the User model
     },

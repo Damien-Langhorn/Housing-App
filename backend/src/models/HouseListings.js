@@ -19,7 +19,7 @@ const houseSchema = new mongoose.Schema(
       //required: true,
     },
     postal_code: {
-      type: String,
+      type: Number,
       //required: true,
     },
     price: {

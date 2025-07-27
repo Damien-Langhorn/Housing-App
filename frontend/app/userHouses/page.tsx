@@ -52,16 +52,16 @@ const Page = () => {
 
   const { getToken } = useAuth();
 
-  const handleAddHouse = async (houseData) => {
+  const handleAddHouse = async (houseData: House) => {
     const token = await getToken();
     if (!token) {
       console.error("User is not authenticated.");
       return;
     }
     console.log("Adding house with data:", houseData);
-    console.log("Token:", token);
 
     try {
+      setLoading(true);
       const res = await axios.post(`${DATABASE_URL}/api/houses`, houseData, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -69,8 +69,8 @@ const Page = () => {
         },
       });
       console.log("House added successfully:", res.data);
-      // Optionally, you can show a success message to the user
-      // and refresh the house list or update the state directly
+      // Update the houses state with the newly added house
+      // Assuming res.data contains the newly added house object
       setHouses((prevHouses) => [...prevHouses, res.data]);
     } catch (error) {
       console.error("Error adding house:", error);
@@ -79,7 +79,7 @@ const Page = () => {
     }
 
     setIsModalOpen(false);
-    setLoading(true);
+    setLoading(false);
   };
 
   return (

@@ -1,9 +1,12 @@
 import React, { useState } from "react";
+import { useAuth } from "@clerk/nextjs";
 
 type AddHouseModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (formData: {
+    user_id?: string; // Optional, can be set from useAuth
+    _id?: string; // Optional, can be set from the backend
     address: string;
     postal_code: string;
     city: string;
@@ -18,6 +21,8 @@ type AddHouseModalProps = {
 };
 
 const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
+  const { userId } = useAuth();
+
   const [form, setForm] = useState({
     address: "",
     postal_code: "",
@@ -29,6 +34,7 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
     square_feet: "",
     year_built: "",
     image: "",
+    clerk_id: userId, // Assuming clerkId is needed for submission
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,8 +43,8 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     onSubmit(form);
-    onClose();
     setForm({
       address: "",
       postal_code: "",
@@ -50,7 +56,9 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
       square_feet: "",
       year_built: "",
       image: "",
+      clerk_id: userId, // Reset clerkId if needed
     });
+    onClose();
   };
 
   if (!isOpen) return null;
@@ -72,6 +80,7 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
             className="input input-bordered w-full"
             name="postal_code"
             placeholder="Postal Code"
+            type="number"
             value={form.postal_code}
             onChange={handleChange}
             required

@@ -22,9 +22,10 @@ router.post(
   createHouse,
   upload.single("image"),
   (req, res) => {
+    express.json(); // Ensure the request is parsed as JSON
     // Handle the file upload and create house logic
     if (req.file) {
-      req.body.image_url = req.file.path; // Assuming you want to save the file path in the database
+      req.body.image = req.file.path; // Assuming you want to save the file path in the database
     }
     res
       .status(201)

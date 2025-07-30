@@ -48,8 +48,8 @@ const houseSchema = new mongoose.Schema(
       type: Number,
       //required: true,
     },
-    image_url: {
-      type: String,
+    image: {
+      type: String || File,
       //required: true,
     },
     clerk_id: {

@@ -68,7 +68,7 @@ const Page = () => {
       const res = await axios.post(`${DATABASE_URL}/api/houses`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
+          "Content-Type": "application/json",
         },
       });
       console.log("House added successfully:", res.data);

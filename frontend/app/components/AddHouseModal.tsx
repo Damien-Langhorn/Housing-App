@@ -37,11 +37,11 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
     clerk_id: userId, // Assuming clerkId is needed for submission
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
     onSubmit(form);

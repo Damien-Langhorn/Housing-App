@@ -41,7 +41,7 @@ export async function createHouse(req, res) {
       bathrooms,
       square_feet,
       year_built,
-      image_url,
+      image,
       userId,
     } = req.body;
     const newHouse = new House({
@@ -54,7 +54,7 @@ export async function createHouse(req, res) {
       bathrooms,
       square_feet,
       year_built,
-      image_url,
+      image,
       user: userId, // Assuming userId is passed in the request body
     });
     await newHouse.save();
@@ -81,7 +81,7 @@ export async function updateHouse(req, res) {
       bathrooms,
       square_feet,
       year_built,
-      image_url,
+      image,
     } = req.body;
     const updatedHouse = await House.findByIdAndUpdate(
       req.params.id,
@@ -95,7 +95,7 @@ export async function updateHouse(req, res) {
         bathrooms,
         square_feet,
         year_built,
-        image_url,
+        image,
       },
       { new: true }
     );

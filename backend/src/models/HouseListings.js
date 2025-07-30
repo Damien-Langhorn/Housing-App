@@ -5,6 +5,12 @@ const houseSchema = new mongoose.Schema(
     _id: {
       type: mongoose.Schema.Types.ObjectId,
       auto: true,
+      unique: true, // Ensure each house has a unique ID
+    },
+    house_id: {
+      type: Number,
+      auto: true,
+      unique: true, // Ensure each house has a unique ID
     },
     address: {
       type: String,

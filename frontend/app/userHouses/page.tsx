@@ -52,7 +52,7 @@ const Page = () => {
 
   const { getToken } = useAuth();
 
-  const handleAddHouse = async (houseData: House) => {
+  const handleAddHouse = async (houseData: object) => {
     const token = await getToken();
     if (!token) {
       console.error("User is not authenticated.");
@@ -60,9 +60,12 @@ const Page = () => {
     }
     console.log("Adding house with data:", houseData);
 
+    const data = JSON.stringify(houseData);
+    console.log("Data to be sent:", data);
+
     try {
       setLoading(true);
-      const res = await axios.post(`${DATABASE_URL}/api/houses`, houseData, {
+      const res = await axios.post(`${DATABASE_URL}/api/houses`, data, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "multipart/form-data",

@@ -20,23 +20,16 @@ router.post(
   "/",
   requireAuth,
   createHouse,
+  "/upload_image",
   upload.single("image"),
-  (req, res) => {
-    express.json(); // Ensure the request is parsed as JSON
-    // Handle the file upload and create house logic
-    if (req.file) {
-      req.body.image = req.file.path; // Assuming you want to save the file path in the database
-    }
-    res
-      .status(201)
-      .json({ message: "House created successfully", house: req.body });
-  }
+  uploadImage // Handle single file upload with field name 'image'
 );
-// Note: The upload middleware is used to handle file uploads before creating the house
-// If you want to handle file uploads separately, you can adjust this accordingly
-// For example, you can use upload.array() if you want to handle multiple files
-// or upload.fields() if you want to handle multiple fields with different file inputs
-// Adjust the field name "image" based on your form input name
+function uploadImage(req, res) {
+  console.log("req file", req.file);
+  res.json({
+    message: "Image uploaded successfully",
+  });
+}
 router.put("/:id", requireAuth, updateHouse);
 router.delete("/:id", requireAuth, deleteHouse);
 

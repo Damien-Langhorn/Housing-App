@@ -16,7 +16,7 @@ type AddHouseModalProps = {
     bathrooms: string;
     square_feet: string;
     year_built: string;
-    image: string | FileList; // Allow for file upload
+    image: string | File; // Allow for file upload
   }) => void;
 };
 

@@ -9,6 +9,9 @@ import cors from "cors";
 
 dotenv.config();
 
+const multer = require("multer");
+const upload = multer({ dest: "uploads/" }); // Set the destination for uploaded files
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 

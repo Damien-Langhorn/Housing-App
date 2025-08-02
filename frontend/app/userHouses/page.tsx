@@ -69,6 +69,7 @@ const Page = () => {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
+          Accept: "multipart/form-data", // Ensure the server can handle file uploads
         },
       });
       console.log("House added successfully:", res.data);

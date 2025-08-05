@@ -2,60 +2,49 @@ import mongoose from "mongoose";
 
 const houseSchema = new mongoose.Schema(
   {
-    _id: {
-      type: mongoose.Schema.Types.ObjectId,
-      auto: true,
-      unique: true, // Ensure each house has a unique ID
-    },
-    house_id: {
-      type: Number,
-      auto: true,
-      unique: true, // Ensure each house has a unique ID
-    },
     address: {
       type: String,
-      //required: true,
+      required: true,
     },
     city: {
       type: String,
-      //required: true,
+      required: true,
     },
     state: {
       type: String,
-      //required: true,
+      required: true,
     },
     postal_code: {
-      type: Number,
-      //required: true,
+      type: String,
+      required: true,
     },
     price: {
       type: Number,
-      //required: true,
+      required: true,
     },
     bedrooms: {
       type: Number,
-      //required: true,
+      required: true,
     },
     bathrooms: {
       type: Number,
-      //required: true,
+      required: true,
     },
     square_feet: {
       type: Number,
-      //required: true,
+      required: true,
     },
     year_built: {
       type: Number,
-      //required: true,
+      required: true,
     },
     image: {
-      type: String || File,
-      //required: true,
+      type: String,
+      required: true,
     },
     clerk_id: {
       type: String,
-      //required: true,
-      unique: true, // Assuming this is the Clerk user ID
+      required: true,
       ref: "User", // Reference to the User model
     },
   },

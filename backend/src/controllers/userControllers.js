@@ -41,16 +41,14 @@ export async function getUserHouses(req, res) {
 
 export async function createUser(req, res) {
   try {
-    const { username, password, email } = req.body;
+    const { username, email, clerk_id } = req.body;
     const newUser = new User({
       username,
-      password, // In production, hash the password before saving
       email,
+      clerk_id,
     });
     await newUser.save();
-    res
-      .status(201)
-      .json({ message: "User created successfully", user: newUser });
+    res.status(201).json(newUser);
   } catch (error) {
     res
       .status(500)
@@ -70,9 +68,7 @@ export async function updateUser(req, res) {
     if (!updatedUser) {
       return res.status(404).json({ message: "User not found" });
     }
-    res
-      .status(200)
-      .json({ message: "User updated successfully", user: updatedUser });
+    res.status(200).json(updatedUser);
   } catch (error) {
     res
       .status(500)

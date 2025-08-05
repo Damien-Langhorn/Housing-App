@@ -31,6 +31,8 @@ export async function getHouseById(req, res) {
 
 export async function createHouse(req, res) {
   try {
+    console.log("Creating house with data:", req.body); // Add debug log
+
     const {
       address,
       city,
@@ -44,6 +46,7 @@ export async function createHouse(req, res) {
       image,
       clerk_id,
     } = req.body;
+
     const newHouse = new House({
       address,
       city,
@@ -55,17 +58,18 @@ export async function createHouse(req, res) {
       square_feet,
       year_built,
       image,
-      user: clerk_id, // Assuming userId is passed in the request body
+      clerk_id,
     });
+
     await newHouse.save();
-    res
-      .status(201)
-      .json({ message: "House created successfully", house: newHouse });
+    console.log("House created successfully:", newHouse._id);
+
+    res.status(201).json(newHouse);
   } catch (error) {
+    console.error("Error creating house:", error.message);
     res
       .status(500)
       .json({ message: "Error creating house", error: error.message });
-    console.error("Error creating houses:", error.message);
   }
 }
 
@@ -119,8 +123,6 @@ export async function deleteHouse(req, res) {
     if (!deletedHouse) {
       return res.status(404).json({ message: "House not found" });
     }
-    // Optionally, you can also delete the image from the file system if needed
-    await fs.unlink(deletedHouse.image_url); // Uncomment if you want to delete the image file
     res.status(200).json({ message: "House deleted successfully" });
   } catch (error) {
     res

@@ -7,10 +7,10 @@ import {
   getHouseById,
 } from "../controllers/houseControllers.js";
 import { requireAuth } from "../middleware/clerk.js";
-import multer from "multer";
 
-// Define routes for notes
+const router = express.Router();
 
+// Define routes for houses
 router.get("/", getHouses);
 router.get("/:id", getHouseById); // Assuming you want to fetch a specific house by ID
 router.post("/", requireAuth, createHouse);

@@ -11,7 +11,7 @@ const router = express.Router();
 
 // Define routes for users
 router.get("/:id", getUser);
-router.get("/:clerk_id/houses", getUserHouses); // Fetch houses for a specific user
+router.get("/:clerk_id/houses", getUserHouses);
 router.post("/", createUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);

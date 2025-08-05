@@ -42,7 +42,7 @@ export async function createHouse(req, res) {
       square_feet,
       year_built,
       image,
-      userId,
+      clerk_id,
     } = req.body;
     const newHouse = new House({
       address,
@@ -55,7 +55,7 @@ export async function createHouse(req, res) {
       square_feet,
       year_built,
       image,
-      user: userId, // Assuming userId is passed in the request body
+      user: clerk_id, // Assuming userId is passed in the request body
     });
     await newHouse.save();
     res

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import HouseCards from "../components/HouseCards";
 import { useAuth } from "@clerk/nextjs";
 import AddHouseModal from "../components/AddHouseModal";
+import { uploadToPinata } from "../utilis/pinata";
 
 type House = {
   user_id: string;
@@ -52,38 +53,52 @@ const Page = () => {
 
   const { getToken } = useAuth();
 
-  const handleAddHouse = async (houseData: object) => {
+  const handleAddHouse = async (formData: FormData) => {
     const token = await getToken();
     if (!token) {
       console.error("User is not authenticated.");
       return;
     }
-    console.log("Adding house with data:", houseData);
-
-    const data = JSON.stringify(houseData);
-    console.log("Data to be sent:", data);
 
     try {
       setLoading(true);
-      const res = await axios.post(`${DATABASE_URL}/api/houses`, data, {
+
+      // Get the file from FormData
+      const imageFile = formData.get("image") as File;
+
+      // Upload to Pinata first
+      const imageUrl = await uploadToPinata(imageFile);
+
+      // Create a regular object with all the house data
+      const houseData = {
+        address: formData.get("address") as string,
+        postal_code: formData.get("postal_code") as string,
+        city: formData.get("city") as string,
+        state: formData.get("state") as string,
+        price: Number(formData.get("price")),
+        bedrooms: Number(formData.get("bedrooms")),
+        bathrooms: Number(formData.get("bathrooms")),
+        square_feet: Number(formData.get("square_feet")),
+        year_built: Number(formData.get("year_built")),
+        image: imageUrl, // Use the Pinata URL
+        clerk_id: userId, // Add user ID
+      };
+
+      const res = await axios.post(`${DATABASE_URL}/api/houses`, houseData, {
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json",
-          Accept: "multipart/form-data", // Ensure the server can handle file uploads
+          "Content-Type": "application/json", // Send as JSON
         },
       });
+
       console.log("House added successfully:", res.data);
-      // Update the houses state with the newly added house
-      // Assuming res.data contains the newly added house object
       setHouses((prevHouses) => [...prevHouses, res.data]);
+      setIsModalOpen(false);
     } catch (error) {
       console.error("Error adding house:", error);
-      // Optionally, you can show an error message to the user
-      return;
+    } finally {
+      setLoading(false);
     }
-
-    setIsModalOpen(false);
-    setLoading(false);
   };
 
   return (
@@ -135,7 +150,7 @@ const Page = () => {
                   onSubmit={handleAddHouse}
                 />
                 {houses.map((house) => (
-                  <HouseCards key={house._id} house={house} />
+                  <HouseCards key={house.address} house={house} />
                 ))}
               </>
             )}

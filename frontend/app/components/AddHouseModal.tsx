@@ -1,23 +1,12 @@
+"use client";
+
 import React, { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 
 type AddHouseModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (formData: {
-    user_id?: string; // Optional, can be set from useAuth
-    _id?: string; // Optional, can be set from the backend
-    address: string;
-    postal_code: string;
-    city: string;
-    state: string;
-    price: string;
-    bedrooms: string;
-    bathrooms: string;
-    square_feet: string;
-    year_built: string;
-    image: string | File; // Allow for file upload
-  }) => void;
+  onSubmit: (formData: FormData) => void;
 };
 
 const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
@@ -33,18 +22,42 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
     bathrooms: "",
     square_feet: "",
     year_built: "",
-    image: "",
+    image: null as File | null, // Make sure this is typed as File | null
     clerk_id: userId, // Assuming clerkId is needed for submission
   });
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setForm({ ...form, image: e.target.files[0] });
+    }
+  };
 
-    onSubmit(form);
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData();
+
+    // Append all text fields
+    formData.append("address", form.address);
+    formData.append("postal_code", form.postal_code);
+    formData.append("city", form.city);
+    formData.append("state", form.state);
+    formData.append("price", form.price);
+    formData.append("bedrooms", form.bedrooms);
+    formData.append("bathrooms", form.bathrooms);
+    formData.append("square_feet", form.square_feet);
+    formData.append("year_built", form.year_built);
+
+    // Append file if it exists
+    if (form.image) {
+      formData.append("image", form.image);
+    }
+
+    onSubmit(formData);
     setForm({
       address: "",
       postal_code: "",
@@ -55,7 +68,7 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
       bathrooms: "",
       square_feet: "",
       year_built: "",
-      image: "",
+      image: null, // Reset image
       clerk_id: userId, // Reset clerkId if needed
     });
     onClose();
@@ -150,9 +163,8 @@ const AddHouseModal = ({ isOpen, onClose, onSubmit }: AddHouseModalProps) => {
             type="file"
             className="input input-bordered w-full"
             name="image"
-            placeholder="Upload Image"
-            value={form.image}
-            onChange={handleChange}
+            accept="image/*"
+            onChange={handleFileChange} // Use separate handler for file
             required
           />
           <div className="flex justify-end gap-2 mt-4">

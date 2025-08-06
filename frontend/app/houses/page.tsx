@@ -4,20 +4,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import HouseCards from "../components/HouseCards";
 import { useAuth } from "@clerk/nextjs";
-
-type House = {
-  _id: string;
-  image: string;
-  city: string;
-  state: string;
-  price: number;
-  bedrooms: number;
-  bathrooms: number;
-  square_feet: number;
-  address: string;
-  year_built: number;
-  clerk_id: string; // Assuming this is the user ID associated with the house
-};
+import type { House } from "@/app/components/HouseCards";
 
 const Page = () => {
   const { userId } = useAuth();

@@ -6,21 +6,7 @@ import HouseCards from "../components/HouseCards";
 import { useAuth } from "@clerk/nextjs";
 import AddHouseModal from "../components/AddHouseModal";
 import { uploadToPinata } from "../utilis/pinata";
-
-type House = {
-  user_id: string;
-  _id: string;
-  image: string;
-  city: string;
-  state: string;
-  price: number;
-  bedrooms: number;
-  bathrooms: number;
-  square_feet: number;
-  address: string;
-  postal_code: string;
-  year_built: number;
-};
+import type { House } from "@/app/components/HouseCards";
 
 const Page = () => {
   const { userId } = useAuth();

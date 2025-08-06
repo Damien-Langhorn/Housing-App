@@ -5,6 +5,7 @@ import Image from "next/image";
 export type House = {
   user_id?: string;
   _id: string;
+  clerk_id?: string; // Optional for user houses
   image: string;
   city: string;
   state: string;
@@ -26,7 +27,13 @@ const HouseCards = ({ house }: HouseCardsProps) => {
     <div className="flex justify-center items-center p-4">
       <div className="card bg-base-100 w-96 shadow-sm">
         <Link href={`/houses/${house._id}`}>
-          <Image src={house.image} width={500} height={500} alt="House Image" />
+          <Image
+            src={house.image}
+            width={500}
+            height={500}
+            alt="House Image"
+            className="w-full h-64 object-cover rounded-lg shadow-lg"
+          />
         </Link>
         <div className="card-body">
           <h2 className="card-title">

@@ -1,6 +1,7 @@
 import express from "express";
 import houseRoutes from "./routes/houseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import messageRoutes from "./routes/messageRoutes.js";
 import webhookRouter from "./routes/webhook.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
@@ -27,6 +28,7 @@ app.use(
 app.use(express.json());
 app.use("/api/houses", rateLimiter, houseRoutes);
 app.use("/api/user", rateLimiter, userRoutes);
+app.use("/api/messages", rateLimiter, messageRoutes);
 
 // Add error handling middleware
 app.use((err, req, res, next) => {

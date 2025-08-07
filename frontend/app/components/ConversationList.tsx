@@ -30,6 +30,9 @@ const ConversationsList = () => {
   const { userId, getToken } = useAuth();
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [unreadCounts, setUnreadCounts] = useState<{ [key: string]: number }>(
+    {}
+  );
   const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
   useEffect(() => {
@@ -52,6 +55,26 @@ const ConversationsList = () => {
 
     if (userId) {
       fetchConversations();
+    }
+  }, [userId, getToken, DATABASE_URL]);
+
+  // Fetch unread counts
+  useEffect(() => {
+    const fetchUnreadCounts = async () => {
+      try {
+        const token = await getToken();
+        const response = await axios.get(
+          `${DATABASE_URL}/api/messages/unread-counts`,
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        setUnreadCounts(response.data);
+      } catch (error) {
+        console.error("Error fetching unread counts:", error);
+      }
+    };
+
+    if (userId) {
+      fetchUnreadCounts();
     }
   }, [userId, getToken, DATABASE_URL]);
 
@@ -160,6 +183,13 @@ const ConversationsList = () => {
                     </div>
                   )}
                 </div>
+
+                {/* Unread Messages Badge */}
+                {unreadCounts[conversation._id] > 0 && (
+                  <span className="bg-blue-500 text-white text-xs rounded-full px-2 py-1">
+                    {unreadCounts[conversation._id]}
+                  </span>
+                )}
 
                 {/* Arrow indicator */}
                 <div className="flex-shrink-0">

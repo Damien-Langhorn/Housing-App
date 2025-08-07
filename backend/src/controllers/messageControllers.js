@@ -46,9 +46,6 @@ export async function sendMessage(req, res) {
 
     await conversation.save();
 
-    // Populate sender info for response
-    await message.populate("sender_id receiver_id house_id");
-
     res.status(201).json(message);
   } catch (error) {
     console.error("Error sending message:", error);
@@ -72,7 +69,7 @@ export async function getMessages(req, res) {
       ],
     })
       .sort({ createdAt: 1 })
-      .populate("sender_id receiver_id house_id");
+      .populate("house_id");
 
     res.status(200).json(messages);
   } catch (error) {

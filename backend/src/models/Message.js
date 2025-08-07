@@ -5,12 +5,10 @@ const messageSchema = new mongoose.Schema(
     sender_id: {
       type: String, //Clerk ID
       required: true,
-      ref: "User",
     },
     receiver_id: {
       type: String, //Clerk ID
       required: true,
-      ref: "User",
     },
     house_id: {
       type: String, //House ID

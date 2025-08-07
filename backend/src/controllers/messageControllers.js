@@ -91,7 +91,14 @@ export async function getUserConversations(req, res) {
     const conversations = await Conversation.find({
       participants: user_id,
     })
-      .populate("house_id last_message")
+      .populate({
+        path: "house_id",
+        select: "address city state price image", // Only get needed fields
+      })
+      .populate({
+        path: "last_message",
+        select: "content sender_id createdAt",
+      })
       .sort({ last_message_time: -1 });
 
     res.status(200).json(conversations);
@@ -121,5 +128,34 @@ export async function markAsRead(req, res) {
       message: "Error marking messages as read",
       error: error.message,
     });
+  }
+}
+
+// Get unread message counts for each conversation
+export async function getUnreadCounts(req, res) {
+  try {
+    const user_id = req.user.clerk_id;
+
+    const conversations = await Conversation.find({
+      participants: user_id,
+    });
+
+    const unreadCounts = {};
+
+    for (const conversation of conversations) {
+      const count = await Message.countDocuments({
+        house_id: conversation.house_id,
+        receiver_id: user_id,
+        read: false,
+      });
+      unreadCounts[conversation._id] = count;
+    }
+
+    res.status(200).json(unreadCounts);
+  } catch (error) {
+    console.error("Error fetching unread counts:", error);
+    res
+      .status(500)
+      .json({ message: "Error fetching unread counts", error: error.message });
   }
 }

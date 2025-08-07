@@ -39,12 +39,12 @@ const Page = () => {
       console.error("House data not available");
       return;
     }
-    console.log("Contacting seller for house:", house._id);
     if (!userId) {
       alert("Please sign in to contact the seller.");
       return;
     }
-    // Add your contact logic here
+    // Redirect to messages page with house and seller info
+    router.push(`/messages/${house._id}/${house.clerk_id}`);
   };
 
   const handleEdit = () => {

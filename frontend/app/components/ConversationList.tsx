@@ -43,9 +43,12 @@ const ConversationsList = () => {
       const promises = userIds.map(async (id) => {
         try {
           // Call your backend to get user info from Clerk
-          const response = await axios.get(`${DATABASE_URL}/api/user/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axios.get(
+            `${DATABASE_URL}/api/users/clerk/${id}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
           return {
             id,
             username:
@@ -111,7 +114,7 @@ const ConversationsList = () => {
       try {
         const token = await getToken();
         const response = await axios.get(
-          `${DATABASE_URL}/api/messages/unread`,
+          `${DATABASE_URL}/api/messages/unread-counts`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUnreadCounts(response.data);

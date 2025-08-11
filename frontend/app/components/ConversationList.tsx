@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
+import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -33,7 +34,42 @@ const ConversationsList = () => {
   const [unreadCounts, setUnreadCounts] = useState<{ [key: string]: number }>(
     {}
   );
+  const [userNames, setUserNames] = useState<{ [key: string]: string }>({});
   const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+
+  const fetchUserNames = async (userIds: string[]) => {
+    try {
+      const token = await getToken();
+      const promises = userIds.map(async (id) => {
+        try {
+          // Call your backend to get user info from Clerk
+          const response = await axios.get(`${DATABASE_URL}/api/user/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          return {
+            id,
+            username:
+              response.data.username ||
+              response.data.firstName ||
+              "Unknown User",
+          };
+        } catch (error) {
+          console.error(`Error fetching user ${id}:`, error);
+          return { id, username: "Unknown User" };
+        }
+      });
+
+      const results = await Promise.all(promises);
+      const nameMap = results.reduce((acc, { id, username }) => {
+        acc[id] = username;
+        return acc;
+      }, {} as { [key: string]: string });
+
+      setUserNames((prev) => ({ ...prev, ...nameMap }));
+    } catch (error) {
+      console.error("Error fetching usernames:", error);
+    }
+  };
 
   useEffect(() => {
     const fetchConversations = async () => {
@@ -46,6 +82,17 @@ const ConversationsList = () => {
           }
         );
         setConversations(response.data);
+
+        const allUserIds = response.data.flatMap(
+          (conv: Conversation) => conv.participants
+        );
+        const uniqueUserIds = [...new Set(allUserIds)].filter(
+          (id) => id !== userId
+        );
+
+        if (uniqueUserIds.length > 0) {
+          await fetchUserNames(uniqueUserIds);
+        }
       } catch (error) {
         console.error("Error fetching conversations:", error);
       } finally {
@@ -64,7 +111,7 @@ const ConversationsList = () => {
       try {
         const token = await getToken();
         const response = await axios.get(
-          `${DATABASE_URL}/api/messages/unread-counts`,
+          `${DATABASE_URL}/api/messages/unread`,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         setUnreadCounts(response.data);
@@ -135,6 +182,7 @@ const ConversationsList = () => {
     <div className="space-y-4">
       {conversations.map((conversation) => {
         const otherUserId = getOtherParticipant(conversation.participants);
+        const otherUserName = userNames[otherUserId] || "Unknown User";
         const isFromMe = conversation.last_message?.sender_id === userId;
 
         return (
@@ -160,6 +208,9 @@ const ConversationsList = () => {
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="font-semibold text-sm truncate">
+                        {otherUserName}
+                      </h3>
+                      <h3 className="font-semibold text-sm truncate">
                         {conversation.house_id.address}
                       </h3>
                       <p className="text-xs text-gray-500">
@@ -177,7 +228,7 @@ const ConversationsList = () => {
                   {conversation.last_message && (
                     <div className="mt-2">
                       <p className="text-sm text-gray-600 truncate">
-                        {isFromMe ? "You: " : ""}
+                        {isFromMe ? "You: " : `${otherUserName}: `}
                         {conversation.last_message.content}
                       </p>
                     </div>

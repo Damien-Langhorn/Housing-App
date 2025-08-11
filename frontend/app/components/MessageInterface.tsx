@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
+import { House } from "./HouseCards";
 
 type Message = {
   _id: string;
@@ -17,7 +18,7 @@ type Message = {
 type MessageInterfaceProps = {
   houseId: string;
   otherUserId: string;
-  house: any;
+  house: House | null;
 };
 
 const MessageInterface = ({

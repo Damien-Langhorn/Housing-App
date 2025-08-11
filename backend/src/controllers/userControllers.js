@@ -1,10 +1,10 @@
 import User from "../models/User.js";
 import House from "../models/HouseListings.js";
-import mongoose from "mongoose";
+import { clerkClient } from "@clerk/express";
 
 export async function getUser(req, res) {
   try {
-    const user = await User.findById(req.params.id);
+    const user = await User.findById(req.params.clerk_id);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -91,4 +91,62 @@ export async function deleteUser(req, res) {
     console.error("Error deleting user:", error.message);
   }
 }
+
+// Get user by Clerk ID
+export async function getUserByClerkId(req, res) {
+  try {
+    const { clerkId } = req.params;
+
+    // Get user from Clerk
+    const user = await clerkClient.users.getUser(clerkId);
+
+    const userData = {
+      id: user.id,
+      username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.emailAddresses[0]?.emailAddress,
+      imageUrl: user.imageUrl,
+    };
+
+    res.status(200).json(userData);
+  } catch (error) {
+    console.error("Error fetching user from Clerk:", error);
+    res.status(404).json({ message: "User not found" });
+  }
+}
+
+// Get multiple users by their Clerk IDs
+export async function getUsersByClerkIds(req, res) {
+  try {
+    const { userIds } = req.body; // Expecting array of Clerk IDs
+
+    const users = await Promise.all(
+      userIds.map(async (id) => {
+        try {
+          const user = await clerkClient.users.getUser(id);
+          return {
+            id: user.id,
+            username: user.username || user.firstName || "Unknown User",
+            firstName: user.firstName,
+            imageUrl: user.imageUrl,
+          };
+        } catch (error) {
+          return {
+            id: id,
+            username: "Unknown User",
+            firstName: null,
+            imageUrl: null,
+          };
+        }
+      })
+    );
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users from Clerk:", error);
+    res.status(500).json({ message: "Error fetching users" });
+  }
+}
+
 // This code defines the user controller functions for handling user-related operations

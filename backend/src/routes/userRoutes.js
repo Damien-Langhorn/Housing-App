@@ -3,7 +3,6 @@ import {
   createUser,
   deleteUser,
   updateUser,
-  getUser,
   getUserHouses,
   getUserByClerkId,
   getUsersByClerkIds,
@@ -12,12 +11,11 @@ import {
 const router = express.Router();
 
 // Define routes for users
-router.get("/clerk/:clerkId", getUser);
+router.get("/clerk/:clerkId", getUserByClerkId);
 router.get("/:clerk_id/houses", getUserHouses);
 router.post("/", createUser);
 router.put("/:id", updateUser);
 router.delete("/:id", deleteUser);
-router.get("/clerk/:clerkId", getUserByClerkId);
 router.post("/clerk/batch", getUsersByClerkIds);
 
 export default router;

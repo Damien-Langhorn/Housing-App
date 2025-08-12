@@ -38,10 +38,12 @@ const ConversationsList = () => {
 
   useEffect(() => {
     const fetchUserNames = async (userIds: string[]) => {
+      console.log("=== Fetching usernames for IDs:", userIds);
       try {
         const token = await getToken();
         const promises = userIds.map(async (id) => {
           try {
+            console.log(`Fetching user data for: ${id}`);
             // Call your backend to get user info from Clerk
             const response = await axios.get(
               `${DATABASE_URL}/api/users/clerk/${id}`,
@@ -49,11 +51,13 @@ const ConversationsList = () => {
                 headers: { Authorization: `Bearer ${token}` },
               }
             );
+            console.log(`User data received for ${id}:`, response.data);
             return {
               id,
               username:
                 response.data.username ||
                 response.data.firstName ||
+                response.data.lastName ||
                 "Unknown User",
             };
           } catch (error) {
@@ -63,11 +67,13 @@ const ConversationsList = () => {
         });
 
         const results = await Promise.all(promises);
+        console.log("=== All user fetch results:", results);
         const nameMap = results.reduce((acc, { id, username }) => {
           acc[id] = username;
           return acc;
         }, {} as { [key: string]: string });
 
+        console.log("=== Username map being set:", nameMap);
         setUserNames((prev) => ({ ...prev, ...nameMap }));
       } catch (error) {
         console.error("Error fetching usernames:", error);
@@ -209,12 +215,12 @@ const ConversationsList = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="font-semibold text-sm truncate">
+                      <h3 className="font-semibold text-base text-gray-900 truncate">
                         {otherUserName}
                       </h3>
-                      <h3 className="font-semibold text-sm truncate">
+                      <p className="text-sm font-medium text-gray-700 truncate">
                         {conversation.house_id.address}
-                      </h3>
+                      </p>
                       <p className="text-xs text-gray-500">
                         {conversation.house_id.city},{" "}
                         {conversation.house_id.state} • $

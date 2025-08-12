@@ -96,17 +96,22 @@ export async function deleteUser(req, res) {
 export async function getUserByClerkId(req, res) {
   try {
     const { clerkId } = req.params;
-    console.log("Fetching user by Clerk ID:", clerkId);
+    console.log("=== getUserByClerkId called with:", clerkId);
 
     if (!process.env.CLERK_SECRET_KEY) {
+      console.error("CLERK_SECRET_KEY is not set in environment variables");
       throw new Error("CLERK_SECRET_KEY is not set in environment variables");
     }
 
     // Get user from Clerk
+    console.log("=== Fetching user from Clerk API...");
     const user = await clerkClient.users.getUser(clerkId);
-    console.log("=== Raw CLerk user data:", {
+    console.log("=== Raw Clerk user data:", {
       id: user.id,
       username: user.username,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      emailAddresses: user.emailAddresses?.length || 0,
     });
 
     const userData = {
@@ -118,10 +123,15 @@ export async function getUserByClerkId(req, res) {
       imageUrl: user.imageUrl,
     };
 
+    console.log("=== Sending user data:", userData);
     res.status(200).json(userData);
   } catch (error) {
-    console.error("Error fetching user from Clerk:", error);
-    res.status(404).json({ message: "User not found" });
+    console.error("=== Error in getUserByClerkId:", {
+      message: error.message,
+      status: error.status,
+      clerkId: req.params.clerkId,
+    });
+    res.status(404).json({ message: "User not found", error: error.message });
   }
 }
 

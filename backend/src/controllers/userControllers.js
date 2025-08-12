@@ -104,6 +104,10 @@ export async function getUserByClerkId(req, res) {
 
     // Get user from Clerk
     const user = await clerkClient.users.getUser(clerkId);
+    console.log("=== Raw CLerk user data:", {
+      id: user.id,
+      username: user.username,
+    });
 
     const userData = {
       id: user.id,

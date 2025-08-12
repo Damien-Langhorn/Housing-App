@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
-import { useUser } from "@clerk/nextjs";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -37,44 +36,44 @@ const ConversationsList = () => {
   const [userNames, setUserNames] = useState<{ [key: string]: string }>({});
   const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
-  const fetchUserNames = async (userIds: string[]) => {
-    try {
-      const token = await getToken();
-      const promises = userIds.map(async (id) => {
-        try {
-          // Call your backend to get user info from Clerk
-          const response = await axios.get(
-            `${DATABASE_URL}/api/users/clerk/${id}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            }
-          );
-          return {
-            id,
-            username:
-              response.data.username ||
-              response.data.firstName ||
-              "Unknown User",
-          };
-        } catch (error) {
-          console.error(`Error fetching user ${id}:`, error);
-          return { id, username: "Unknown User" };
-        }
-      });
-
-      const results = await Promise.all(promises);
-      const nameMap = results.reduce((acc, { id, username }) => {
-        acc[id] = username;
-        return acc;
-      }, {} as { [key: string]: string });
-
-      setUserNames((prev) => ({ ...prev, ...nameMap }));
-    } catch (error) {
-      console.error("Error fetching usernames:", error);
-    }
-  };
-
   useEffect(() => {
+    const fetchUserNames = async (userIds: string[]) => {
+      try {
+        const token = await getToken();
+        const promises = userIds.map(async (id) => {
+          try {
+            // Call your backend to get user info from Clerk
+            const response = await axios.get(
+              `${DATABASE_URL}/api/users/clerk/${id}`,
+              {
+                headers: { Authorization: `Bearer ${token}` },
+              }
+            );
+            return {
+              id,
+              username:
+                response.data.username ||
+                response.data.firstName ||
+                "Unknown User",
+            };
+          } catch (error) {
+            console.error(`Error fetching user ${id}:`, error);
+            return { id, username: "Unknown User" };
+          }
+        });
+
+        const results = await Promise.all(promises);
+        const nameMap = results.reduce((acc, { id, username }) => {
+          acc[id] = username;
+          return acc;
+        }, {} as { [key: string]: string });
+
+        setUserNames((prev) => ({ ...prev, ...nameMap }));
+      } catch (error) {
+        console.error("Error fetching usernames:", error);
+      }
+    };
+
     const fetchConversations = async () => {
       try {
         const token = await getToken();

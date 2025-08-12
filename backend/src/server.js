@@ -28,6 +28,7 @@ app.use(
 app.use(express.json());
 app.use("/api/houses", rateLimiter, houseRoutes);
 app.use("/api/user", rateLimiter, userRoutes);
+app.use("/api/users", userRoutes); // Ensure this line exists
 app.use("/api/messages", rateLimiter, messageRoutes);
 
 // Add error handling middleware

@@ -19,12 +19,14 @@ type MessageInterfaceProps = {
   houseId: string;
   otherUserId: string;
   house: House | null;
+  onMessagesRead?: () => void; // ✅ ADD: Optional callback
 };
 
 const MessageInterface = ({
   houseId,
   otherUserId,
   house,
+  onMessagesRead, // ✅ ADD: Destructure the callback
 }: MessageInterfaceProps) => {
   const { userId, getToken } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
@@ -93,25 +95,40 @@ const MessageInterface = ({
     const markMessagesAsRead = async () => {
       try {
         const token = await getToken();
-        await axios.patch(
+        console.log("=== Marking messages as read for:", {
+          houseId,
+          otherUserId,
+        });
+
+        const response = await axios.patch(
           `${DATABASE_URL}/api/messages/read`,
           {
             house_id: houseId,
-            sender_id: otherUserId, // Mark messages FROM the other user as read
+            sender_id: otherUserId, // Messages FROM the other user
           },
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
+
+        console.log("=== Mark as read response:", response.data);
+
+        // ✅ ADD: Call the callback if messages were marked as read
+        if (response.data.updatedCount > 0 && onMessagesRead) {
+          onMessagesRead();
+        }
       } catch (error) {
-        console.error("Error marking messages as read:", error);
+        console.error(
+          "Error marking messages as read:",
+          error instanceof Error ? error.message : error
+        );
       }
     };
 
     if (houseId && otherUserId) {
       markMessagesAsRead();
     }
-  }, [houseId, otherUserId, getToken, DATABASE_URL]);
+  }, [houseId, otherUserId, getToken, DATABASE_URL, onMessagesRead]);
 
   if (loading) return <div>Loading messages...</div>;
 

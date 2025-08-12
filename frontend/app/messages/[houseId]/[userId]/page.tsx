@@ -3,38 +3,50 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
-import MessageInterface from "@/app/components/MessageInterface";
 import { useAuth } from "@clerk/nextjs";
+import MessageInterface from "@/app/components/MessageInterface";
 
 const MessagePage = () => {
-  const { houseId, userId: otherUserId } = useParams();
-  const { userId } = useAuth();
+  const params = useParams();
   const router = useRouter();
+  const { getToken } = useAuth();
   const [house, setHouse] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  const houseId = params.houseId as string;
+  const otherUserId = params.userId as string;
   const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
   useEffect(() => {
     const fetchHouse = async () => {
       try {
+        const token = await getToken();
         const response = await axios.get(
-          `${DATABASE_URL}/api/houses/${houseId}`
+          `${DATABASE_URL}/api/houses/${houseId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
         setHouse(response.data);
       } catch (error) {
         console.error("Error fetching house:", error);
-        router.push("/houses");
       } finally {
         setLoading(false);
       }
     };
 
-    if (houseId) fetchHouse();
-  }, [houseId, DATABASE_URL, router]);
+    if (houseId) {
+      fetchHouse();
+    }
+  }, [houseId, getToken, DATABASE_URL]);
 
-  if (!userId) {
-    return <div>Please sign in to access messages.</div>;
-  }
+  const handleMessagesRead = () => {
+    window.dispatchEvent(
+      new CustomEvent("messagesRead", {
+        detail: { houseId, otherUserId },
+      })
+    );
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -51,9 +63,10 @@ const MessagePage = () => {
       </button>
 
       <MessageInterface
-        houseId={houseId as string}
-        otherUserId={otherUserId as string}
+        houseId={houseId}
+        otherUserId={otherUserId}
         house={house}
+        onMessagesRead={handleMessagesRead}
       />
     </div>
   );

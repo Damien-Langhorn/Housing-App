@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 import Link from "next/link";
@@ -113,25 +113,61 @@ const ConversationsList = () => {
     }
   }, [userId, getToken, DATABASE_URL]);
 
-  // Fetch unread counts
+  const fetchUnreadCounts = useCallback(async () => {
+    try {
+      console.log("=== fetchUnreadCounts called");
+      const token = await getToken();
+      console.log(
+        "=== Token obtained, making request to:",
+        `${DATABASE_URL}/api/messages/unread-counts`
+      );
+
+      const response = await axios.get(
+        `${DATABASE_URL}/api/messages/unread-counts`,
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+
+      console.log("=== Unread counts response status:", response.status);
+      console.log("=== Unread counts response data:", response.data);
+      setUnreadCounts(response.data);
+    } catch (error) {
+      console.error("=== Error fetching unread counts:", error);
+    }
+  }, [getToken, DATABASE_URL]);
+
+  // Refresh unread counts when component mounts
   useEffect(() => {
-    const fetchUnreadCounts = async () => {
-      try {
-        const token = await getToken();
-        const response = await axios.get(
-          `${DATABASE_URL}/api/messages/unread-counts`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
-        setUnreadCounts(response.data);
-      } catch (error) {
-        console.error("Error fetching unread counts:", error);
+    if (userId) {
+      console.log("=== Component mounted, fetching unread counts");
+      fetchUnreadCounts();
+    }
+  }, [userId, fetchUnreadCounts]);
+
+  // ✅ SIMPLIFIED: Just refresh on focus and visibility change
+  useEffect(() => {
+    const handlePageFocus = () => {
+      console.log("=== Page gained focus, refreshing unread counts");
+      fetchUnreadCounts();
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        console.log("=== Page became visible, refreshing unread counts");
+        fetchUnreadCounts();
       }
     };
 
-    if (userId) {
-      fetchUnreadCounts();
-    }
-  }, [userId, getToken, DATABASE_URL]);
+    // Listen for when user navigates back (focus event)
+    window.addEventListener("focus", handlePageFocus);
+
+    // Listen for visibility change (when switching tabs)
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      window.removeEventListener("focus", handlePageFocus);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [fetchUnreadCounts]);
 
   // Get the other participant in the conversation
   const getOtherParticipant = (participants: string[]) => {
@@ -188,6 +224,19 @@ const ConversationsList = () => {
 
   return (
     <div className="space-y-4">
+      {/* Debug button to test unread count refresh */}
+      <button
+        onClick={fetchUnreadCounts}
+        className="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600"
+      >
+        🔄 Refresh Unread Counts (Debug)
+      </button>
+
+      {/* Debug display of unread counts */}
+      <div className="bg-gray-100 p-3 rounded text-xs">
+        <strong>Debug - Unread Counts:</strong> {JSON.stringify(unreadCounts)}
+      </div>
+
       {conversations.map((conversation) => {
         const otherUserId = getOtherParticipant(conversation.participants);
         const otherUserName = userNames[otherUserId] || "Unknown User";

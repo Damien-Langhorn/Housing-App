@@ -12,8 +12,8 @@ const router = express.Router();
 
 router.post("/", requireAuth, sendMessage);
 router.get("/conversations", requireAuth, getUserConversations);
+router.get("/unread-counts", requireAuth, getUnreadCounts); // ✅ FIXED: Move this BEFORE the dynamic route
 router.get("/:house_id/:other_user_id", requireAuth, getMessages);
-router.get("/unread-counts", requireAuth, getUnreadCounts);
 router.patch("/read", requireAuth, markAsRead);
 
 export default router;

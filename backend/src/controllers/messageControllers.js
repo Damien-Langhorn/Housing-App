@@ -61,6 +61,12 @@ export async function getMessages(req, res) {
     const { house_id, other_user_id } = req.params;
     const current_user_id = req.user.clerk_id;
 
+    console.log("=== Getting messages for conversation:", {
+      house_id,
+      other_user_id,
+      current_user_id,
+    });
+
     const messages = await Message.find({
       house_id,
       $or: [
@@ -70,6 +76,22 @@ export async function getMessages(req, res) {
     })
       .sort({ createdAt: 1 })
       .populate("house_id");
+
+    // ✅ AUTO-MARK: Mark messages from the other user as read
+    const markResult = await Message.updateMany(
+      {
+        house_id,
+        sender_id: other_user_id, // Messages FROM the other user
+        receiver_id: current_user_id, // TO the current user
+        read: false,
+      },
+      { read: true }
+    );
+
+    console.log("=== Auto-marked messages as read:", {
+      matchedCount: markResult.matchedCount,
+      modifiedCount: markResult.modifiedCount,
+    });
 
     res.status(200).json(messages);
   } catch (error) {
@@ -141,10 +163,13 @@ export async function markAsRead(req, res) {
 export async function getUnreadCounts(req, res) {
   try {
     const user_id = req.user.clerk_id;
+    console.log("=== Getting unread counts for user:", user_id);
 
     const conversations = await Conversation.find({
       participants: user_id,
     });
+
+    console.log("=== Found conversations:", conversations.length);
 
     const unreadCounts = {};
 
@@ -154,9 +179,14 @@ export async function getUnreadCounts(req, res) {
         receiver_id: user_id, // Current user must be the receiver
         read: false,
       });
+
+      console.log(
+        `=== Conversation ${conversation._id}: ${count} unread messages`
+      );
       unreadCounts[conversation._id] = count;
     }
 
+    console.log("=== Final unread counts:", unreadCounts);
     res.status(200).json(unreadCounts);
   } catch (error) {
     console.error("Error fetching unread counts:", error);

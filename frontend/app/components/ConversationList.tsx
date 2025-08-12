@@ -86,7 +86,7 @@ const ConversationsList = () => {
         );
         setConversations(response.data);
 
-        const allUserIds = response.data.flatMap(
+        const allUserIds: string[] = response.data.flatMap(
           (conv: Conversation) => conv.participants
         );
         const uniqueUserIds = [...new Set(allUserIds)].filter(

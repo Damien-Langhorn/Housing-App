@@ -96,6 +96,11 @@ export async function deleteUser(req, res) {
 export async function getUserByClerkId(req, res) {
   try {
     const { clerkId } = req.params;
+    console.log("Fetching user by Clerk ID:", clerkId);
+
+    if (!process.env.CLERK_SECRET_KEY) {
+      throw new Error("CLERK_SECRET_KEY is not set in environment variables");
+    }
 
     // Get user from Clerk
     const user = await clerkClient.users.getUser(clerkId);

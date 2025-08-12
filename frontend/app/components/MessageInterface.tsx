@@ -88,6 +88,31 @@ const MessageInterface = ({
     }
   };
 
+  // Mark messages as read
+  useEffect(() => {
+    const markMessagesAsRead = async () => {
+      try {
+        const token = await getToken();
+        await axios.patch(
+          `${DATABASE_URL}/api/messages/read`,
+          {
+            house_id: houseId,
+            sender_id: otherUserId, // Mark messages FROM the other user as read
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+      } catch (error) {
+        console.error("Error marking messages as read:", error);
+      }
+    };
+
+    if (houseId && otherUserId) {
+      markMessagesAsRead();
+    }
+  }, [houseId, otherUserId, getToken, DATABASE_URL]);
+
   if (loading) return <div>Loading messages...</div>;
 
   return (

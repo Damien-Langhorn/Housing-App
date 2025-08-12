@@ -192,6 +192,7 @@ const ConversationsList = () => {
         const otherUserId = getOtherParticipant(conversation.participants);
         const otherUserName = userNames[otherUserId] || "Unknown User";
         const isFromMe = conversation.last_message?.sender_id === userId;
+        const unreadCount = unreadCounts[conversation._id] || 0;
 
         return (
           <Link
@@ -214,20 +215,28 @@ const ConversationsList = () => {
                 {/* Conversation Details */}
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
-                    <div>
-                      <h3 className="font-semibold text-base text-gray-900 truncate">
-                        {otherUserName}
-                      </h3>
-                      <p className="text-sm font-medium text-gray-700 truncate">
-                        {conversation.house_id.address}
+                    <div className="flex-1">
+                      <div className="flex items-center justify-between">
+                        <h3 className="font-semibold text-sm truncate">
+                          {otherUserName}
+                        </h3>
+                        {/* ✅ FIXED: Only show unread count if there are unread messages */}
+                        {unreadCount > 0 && (
+                          <span className="bg-blue-500 text-white text-xs rounded-full px-2 py-1 ml-2 flex-shrink-0">
+                            {unreadCount}
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {conversation.house_id.address} •{" "}
+                        {conversation.house_id.city},{" "}
+                        {conversation.house_id.state}
                       </p>
                       <p className="text-xs text-gray-500">
-                        {conversation.house_id.city},{" "}
-                        {conversation.house_id.state} • $
-                        {conversation.house_id.price.toLocaleString()}
+                        ${conversation.house_id.price.toLocaleString()}
                       </p>
                     </div>
-                    <span className="text-xs text-gray-400 flex-shrink-0">
+                    <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
                       {formatTime(conversation.last_message_time)}
                     </span>
                   </div>
@@ -235,20 +244,19 @@ const ConversationsList = () => {
                   {/* Last Message Preview */}
                   {conversation.last_message && (
                     <div className="mt-2">
-                      <p className="text-sm text-gray-600 truncate">
+                      <p
+                        className={`text-sm truncate ${
+                          unreadCount > 0 && !isFromMe
+                            ? "font-semibold text-gray-900"
+                            : "text-gray-600"
+                        }`}
+                      >
                         {isFromMe ? "You: " : `${otherUserName}: `}
                         {conversation.last_message.content}
                       </p>
                     </div>
                   )}
                 </div>
-
-                {/* Unread Messages Badge */}
-                {unreadCounts[conversation._id] > 0 && (
-                  <span className="bg-blue-500 text-white text-xs rounded-full px-2 py-1">
-                    {unreadCounts[conversation._id]}
-                  </span>
-                )}
 
                 {/* Arrow indicator */}
                 <div className="flex-shrink-0">

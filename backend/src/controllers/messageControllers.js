@@ -110,15 +110,24 @@ export async function getUserConversations(req, res) {
 // Mark messages as read
 export async function markAsRead(req, res) {
   try {
+    const receiver_id = req.user.clerk_id; // Current user is the receiver
     const { house_id, sender_id } = req.body;
-    const receiver_id = req.user.clerk_id;
 
-    await Message.updateMany(
-      { house_id, sender_id, receiver_id, read: false },
+    // ✅ FIXED: Mark messages as read where current user is the receiver
+    const result = await Message.updateMany(
+      {
+        house_id,
+        sender_id, // Messages FROM this sender
+        receiver_id, // TO the current user
+        read: false,
+      },
       { read: true }
     );
 
-    res.status(200).json({ message: "Messages marked as read" });
+    res.status(200).json({
+      message: "Messages marked as read",
+      updatedCount: result.modifiedCount,
+    });
   } catch (error) {
     console.error("Error marking messages as read:", error);
     res.status(500).json({
@@ -142,7 +151,7 @@ export async function getUnreadCounts(req, res) {
     for (const conversation of conversations) {
       const count = await Message.countDocuments({
         house_id: conversation.house_id,
-        receiver_id: user_id,
+        receiver_id: user_id, // Current user must be the receiver
         read: false,
       });
       unreadCounts[conversation._id] = count;

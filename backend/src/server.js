@@ -2,6 +2,7 @@ import express from "express";
 import houseRoutes from "./routes/houseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
+import favoriteRoutes from "./routes/favoriteRoutes.js";
 import webhookRouter from "./routes/webhook.js";
 import { connectDB } from "./config/db.js";
 import dotenv from "dotenv";
@@ -29,6 +30,7 @@ app.use(express.json());
 app.use("/api/houses", rateLimiter, houseRoutes);
 app.use("/api/users", userRoutes); // Ensure this line exists
 app.use("/api/messages", rateLimiter, messageRoutes);
+app.use("/api/favorites", rateLimiter, favoriteRoutes);
 
 // Add error handling middleware
 app.use((err, req, res, next) => {

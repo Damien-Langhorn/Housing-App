@@ -19,11 +19,6 @@ const Navbar = () => {
           </Link>
         </div>
         <div className="flex gap-8">
-          <input
-            type="text"
-            placeholder="Search"
-            className="input input-bordered w-24 md:w-auto"
-          />
           <div className="pr-4">
             {!isLoaded ? null : isSignedIn ? (
               <UserButton
@@ -44,7 +39,7 @@ const Navbar = () => {
                   <UserButton.Link
                     label="Favorites"
                     labelIcon={<HeartIcon />}
-                    href="/homes"
+                    href="/favorites"
                   />
                   <UserButton.Link
                     label="Messages"

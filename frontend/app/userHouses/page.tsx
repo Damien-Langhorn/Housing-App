@@ -20,7 +20,7 @@ const Page = () => {
     const getUserHouses = async () => {
       try {
         const res = await axios.get(
-          `${DATABASE_URL}/api/user/${userId}/houses`
+          `${DATABASE_URL}/api/users/${userId}/houses`
         );
         console.log("Houses fetched successfully:", res.data);
         // You can process the fetched data here

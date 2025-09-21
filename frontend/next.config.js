@@ -4,7 +4,6 @@ const nextConfig = {
     unoptimized: true,
     domains: ["gateway.pinata.cloud", "rose-tough-aardwolf-788.mypinata.cloud"],
   },
-  trailingSlash: true,
   eslint: {
     ignoreDuringBuilds: true,
   },

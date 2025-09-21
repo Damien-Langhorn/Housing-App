@@ -39,11 +39,11 @@ export async function uploadToPinata(file: File): Promise<string> {
 
   // ✅ SECURITY: Use backend API route instead of direct Pinata calls
   const uploadFormData = new FormData();
-  uploadFormData.append("file", file);
+  uploadFormData.append('file', file);
 
   try {
-    const response = await fetch("/api/upload", {
-      method: "POST",
+    const response = await fetch('/api/upload', {
+      method: 'POST',
       body: uploadFormData,
     });
 
@@ -58,19 +58,17 @@ export async function uploadToPinata(file: File): Promise<string> {
     }
 
     const result = await response.json();
-
+    
     if (!result.success || !result.data?.IpfsHash) {
-      throw new Error(
-        result.message || "Upload failed - no IPFS hash returned"
-      );
+      throw new Error(result.message || "Upload failed - no IPFS hash returned");
     }
 
     const imageUrl = `https://${GATEWAY_URL}/ipfs/${result.data.IpfsHash}`;
     console.log("File uploaded successfully:", imageUrl);
-
+    
     return imageUrl;
   } catch (error) {
-    console.error("Upload error:", error);
-    throw error instanceof Error ? error : new Error("Failed to upload file");
+    console.error('Upload error:', error);
+    throw error instanceof Error ? error : new Error('Failed to upload file');
   }
 }

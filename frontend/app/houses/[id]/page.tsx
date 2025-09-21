@@ -7,7 +7,7 @@ import type { House } from "@/app/components/HouseCards";
 import Image from "next/image";
 import { useAuth } from "@clerk/nextjs";
 import EditHouseModal from "@/app/components/EditHouseModal";
-import { uploadToPinata } from "@/app/utilis/pinata";
+import { uploadToPinata } from "@/app/utils/pinata";
 
 const Page = () => {
   const { userId, getToken } = useAuth();

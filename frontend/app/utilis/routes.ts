@@ -1,5 +1,5 @@
 // ✅ API Routes configuration
-import { config } from './config';
+import { config } from "./config";
 
 export const apiRoutes = {
   houses: `${config.backendUrl}/api/houses`,
@@ -10,10 +10,10 @@ export const apiRoutes = {
 };
 
 export const clientRoutes = {
-  home: '/',
-  houses: '/houses',
-  favorites: '/favorites',
-  messages: '/messages',
-  userHouses: '/userHouses',
-  signIn: '/signIn',
+  home: "/",
+  houses: "/houses",
+  favorites: "/favorites",
+  messages: "/messages",
+  userHouses: "/userHouses",
+  signIn: "/signIn",
 };

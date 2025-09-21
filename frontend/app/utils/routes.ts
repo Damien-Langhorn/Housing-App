@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     const backendFormData = new FormData();
     backendFormData.append('file', file);
 
-    const response = await fetch(`${process.env.NEXT_PUBLIC_DATABASE_URL}/api/upload`, {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`, {
       method: 'POST',
       headers: {
         'X-User-ID': user.id,

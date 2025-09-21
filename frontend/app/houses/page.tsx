@@ -24,13 +24,13 @@ const Page = () => {
   // ✅ ADD: Search state
   const [searchQuery, setSearchQuery] = useState("");
   const [favoriteHouses, setFavoriteHouses] = useState<Set<string>>(new Set());
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
     const getHouses = async () => {
       try {
-        console.log("Fetching houses from:", DATABASE_URL);
-        const res = await axios.get(`${DATABASE_URL}/api/houses`);
+        console.log("Fetching houses from:", BACKEND_URL);
+        const res = await axios.get(`${BACKEND_URL}/api/houses`);
         console.log("Houses fetched successfully:", res.data);
         setHouses(res.data);
       } catch (error) {
@@ -40,7 +40,7 @@ const Page = () => {
       }
     };
     getHouses();
-  }, [DATABASE_URL]);
+  }, [BACKEND_URL]);
 
   const sortHouses = (
     housesToSort: House[],

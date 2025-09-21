@@ -12,7 +12,7 @@ const Page = () => {
   const { userId } = useAuth();
   const [houses, setHouses] = useState<House[]>([]);
   const [loading, setLoading] = useState(true);
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
     if (!userId) setLoading(false);
@@ -20,7 +20,7 @@ const Page = () => {
     const getUserHouses = async () => {
       try {
         const res = await axios.get(
-          `${DATABASE_URL}/api/users/${userId}/houses`
+          `${BACKEND_URL}/api/users/${userId}/houses`
         );
         console.log("Houses fetched successfully:", res.data);
         // You can process the fetched data here
@@ -33,7 +33,7 @@ const Page = () => {
     };
     // Call the function to fetch houses
     getUserHouses();
-  }, [userId, DATABASE_URL]);
+  }, [userId, BACKEND_URL]);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -70,7 +70,7 @@ const Page = () => {
         clerk_id: userId, // Add user ID
       };
 
-      const res = await axios.post(`${DATABASE_URL}/api/houses`, houseData, {
+      const res = await axios.post(`${BACKEND_URL}/api/houses`, houseData, {
         headers: {
           Authorization: `Bearer ${token}`,
           "Content-Type": "application/json", // Send as JSON

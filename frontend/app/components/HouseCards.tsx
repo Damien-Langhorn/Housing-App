@@ -31,7 +31,7 @@ const HouseCards = ({ house, onFavoriteToggle }: HouseCardsProps) => {
   const { userId, getToken } = useAuth();
   const [isFavorited, setIsFavorited] = useState(house.isFavorited || false);
   const [isLoading, setIsLoading] = useState(false);
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const isOwner =
     userId && (house.clerk_id === userId || house.user_id === userId);
@@ -62,14 +62,14 @@ const HouseCards = ({ house, onFavoriteToggle }: HouseCardsProps) => {
       if (newFavoriteStatus) {
         // Add to favorites
         await axios.post(
-          `${DATABASE_URL}/api/favorites`,
+          `${BACKEND_URL}/api/favorites`,
           { house_id: house._id },
           { headers: { Authorization: `Bearer ${token}` } }
         );
         console.log("✅ House added to favorites:", house._id);
       } else {
         // Remove from favorites
-        await axios.delete(`${DATABASE_URL}/api/favorites/${house._id}`, {
+        await axios.delete(`${BACKEND_URL}/api/favorites/${house._id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         console.log("❌ House removed from favorites:", house._id);

@@ -34,7 +34,7 @@ const ConversationsList = () => {
     {}
   );
   const [userNames, setUserNames] = useState<{ [key: string]: string }>({});
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
     const fetchUserNames = async (userIds: string[]) => {
@@ -46,7 +46,7 @@ const ConversationsList = () => {
             console.log(`Fetching user data for: ${id}`);
             // Call your backend to get user info from Clerk
             const response = await axios.get(
-              `${DATABASE_URL}/api/users/clerk/${id}`,
+              `${BACKEND_URL}/api/users/clerk/${id}`,
               {
                 headers: { Authorization: `Bearer ${token}` },
               }
@@ -84,7 +84,7 @@ const ConversationsList = () => {
       try {
         const token = await getToken();
         const response = await axios.get(
-          `${DATABASE_URL}/api/messages/conversations`,
+          `${BACKEND_URL}/api/messages/conversations`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -119,11 +119,11 @@ const ConversationsList = () => {
       const token = await getToken();
       console.log(
         "=== Token obtained, making request to:",
-        `${DATABASE_URL}/api/messages/unread-counts`
+        `${BACKEND_URL}/api/messages/unread-counts`
       );
 
       const response = await axios.get(
-        `${DATABASE_URL}/api/messages/unread-counts`,
+        `${BACKEND_URL}/api/messages/unread-counts`,
         { headers: { Authorization: `Bearer ${token}` } }
       );
 

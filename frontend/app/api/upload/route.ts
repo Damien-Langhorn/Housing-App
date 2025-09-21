@@ -33,7 +33,7 @@ export async function POST(request: NextRequest) {
     backendFormData.append("file", file);
 
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_DATABASE_URL}/api/upload`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`,
       {
         method: "POST",
         headers: {

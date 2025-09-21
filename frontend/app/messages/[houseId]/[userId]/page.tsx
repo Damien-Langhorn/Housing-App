@@ -15,14 +15,14 @@ const MessagePage = () => {
 
   const houseId = params.houseId as string;
   const otherUserId = params.userId as string;
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
     const fetchHouse = async () => {
       try {
         const token = await getToken();
         const response = await axios.get(
-          `${DATABASE_URL}/api/houses/${houseId}`,
+          `${BACKEND_URL}/api/houses/${houseId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -38,7 +38,7 @@ const MessagePage = () => {
     if (houseId) {
       fetchHouse();
     }
-  }, [houseId, getToken, DATABASE_URL]);
+  }, [houseId, getToken, BACKEND_URL]);
 
   const handleMessagesRead = () => {
     window.dispatchEvent(

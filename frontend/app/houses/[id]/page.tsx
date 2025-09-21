@@ -17,12 +17,12 @@ const Page = () => {
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
     const fetchHouse = async () => {
       try {
-        const res = await axios.get(`${DATABASE_URL}/api/houses/${id}`);
+        const res = await axios.get(`${BACKEND_URL}/api/houses/${id}`);
         console.log("House fetched successfully:", res.data);
         setHouse(res.data);
       } catch (error) {
@@ -32,7 +32,7 @@ const Page = () => {
       }
     };
     if (id) fetchHouse();
-  }, [id, DATABASE_URL]);
+  }, [id, BACKEND_URL]);
 
   const handleContactSeller = () => {
     if (!house) {
@@ -78,7 +78,7 @@ const Page = () => {
       };
 
       const update = await axios.put(
-        `${DATABASE_URL}/api/houses/${id}`,
+        `${BACKEND_URL}/api/houses/${id}`,
         houseData,
         {
           headers: {
@@ -111,7 +111,7 @@ const Page = () => {
       setDeleting(true);
       const token = await getToken();
 
-      await axios.delete(`${DATABASE_URL}/api/houses/${id}`, {
+      await axios.delete(`${BACKEND_URL}/api/houses/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

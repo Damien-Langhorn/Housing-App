@@ -2,7 +2,6 @@
 const nextConfig = {
   images: {
     unoptimized: true,
-    domains: ["gateway.pinata.cloud", "rose-tough-aardwolf-788.mypinata.cloud"],
   },
   eslint: {
     ignoreDuringBuilds: true,
@@ -10,6 +9,11 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-};
+  env: {
+    NEXT_PUBLIC_BACKEND_URL: process.env.NEXT_PUBLIC_BACKEND_URL,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+  },
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

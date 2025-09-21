@@ -24,7 +24,7 @@ const FavoritesPage = () => {
   const [favorites, setFavorites] = useState<FavoriteHouse[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   const fetchFavorites = useCallback(async () => {
     if (!userId) return;
@@ -32,7 +32,7 @@ const FavoritesPage = () => {
     try {
       console.log("=== Fetching favorites for user:", userId);
       const token = await getToken();
-      const response = await axios.get(`${DATABASE_URL}/api/favorites`, {
+      const response = await axios.get(`${BACKEND_URL}/api/favorites`, {
         headers: { Authorization: `Bearer ${token}` },
       });
 
@@ -55,7 +55,7 @@ const FavoritesPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [userId, getToken, DATABASE_URL]);
+  }, [userId, getToken]);
 
   useEffect(() => {
     fetchFavorites();
@@ -73,13 +73,13 @@ const FavoritesPage = () => {
       if (isFavorited) {
         // Add to favorites
         await axios.post(
-          `${DATABASE_URL}/api/favorites`,
+          `${BACKEND_URL}/api/favorites`,
           { house_id: houseId },
           { headers: { Authorization: `Bearer ${token}` } }
         );
       } else {
         // Remove from favorites
-        await axios.delete(`${DATABASE_URL}/api/favorites/${houseId}`, {
+        await axios.delete(`${BACKEND_URL}/api/favorites/${houseId}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 

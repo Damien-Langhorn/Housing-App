@@ -33,7 +33,7 @@ const MessageInterface = ({
   const [newMessage, setNewMessage] = useState("");
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
+  const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   // Fetch messages
   useEffect(() => {
@@ -41,7 +41,7 @@ const MessageInterface = ({
       try {
         const token = await getToken();
         const response = await axios.get(
-          `${DATABASE_URL}/api/messages/${houseId}/${otherUserId}`,
+          `${BACKEND_URL}/api/messages/${houseId}/${otherUserId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -55,7 +55,7 @@ const MessageInterface = ({
     };
 
     fetchMessages();
-  }, [houseId, otherUserId, getToken, DATABASE_URL]);
+  }, [houseId, otherUserId, getToken, BACKEND_URL]);
 
   // Auto-scroll to bottom
   useEffect(() => {
@@ -70,7 +70,7 @@ const MessageInterface = ({
     try {
       const token = await getToken();
       const response = await axios.post(
-        `${DATABASE_URL}/api/messages`,
+        `${BACKEND_URL}/api/messages`,
         {
           receiver_id: otherUserId,
           house_id: houseId,
@@ -101,7 +101,7 @@ const MessageInterface = ({
         });
 
         const response = await axios.patch(
-          `${DATABASE_URL}/api/messages/read`,
+          `${BACKEND_URL}/api/messages/read`,
           {
             house_id: houseId,
             sender_id: otherUserId, // Messages FROM the other user
@@ -128,7 +128,7 @@ const MessageInterface = ({
     if (houseId && otherUserId) {
       markMessagesAsRead();
     }
-  }, [houseId, otherUserId, getToken, DATABASE_URL, onMessagesRead]);
+  }, [houseId, otherUserId, getToken, BACKEND_URL, onMessagesRead]);
 
   if (loading) return <div>Loading messages...</div>;
 

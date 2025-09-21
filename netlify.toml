@@ -1,10 +1,21 @@
 [build]
   base = "frontend"
   command = "npm install && npm run build"
-  publish = "out"
+  publish = ".next"
 
 [build.environment]
   NODE_VERSION = "18"
+
+[functions]
+  included_files = ["**/*"]
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/___netlify-handler"
+  status = 200
 
 [[redirects]]
   from = "/*"

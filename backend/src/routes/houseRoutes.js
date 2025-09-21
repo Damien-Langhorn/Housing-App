@@ -17,23 +17,10 @@ router.get("/", getHouses);
 router.get("/:id", getHouseById);
 
 // ✅ SECURITY: Protected routes with validation and rate limiting
-router.post("/", 
-  uploadRateLimit, 
-  requireAuth, 
-  validateHouse, 
-  createHouse
-);
+router.post("/", uploadRateLimit, requireAuth, validateHouse, createHouse);
 
-router.put("/:id", 
-  uploadRateLimit, 
-  requireAuth, 
-  validateHouse, 
-  updateHouse
-);
+router.put("/:id", uploadRateLimit, requireAuth, validateHouse, updateHouse);
 
-router.delete("/:id", 
-  requireAuth, 
-  deleteHouse
-);
+router.delete("/:id", requireAuth, deleteHouse);
 
 export default router;

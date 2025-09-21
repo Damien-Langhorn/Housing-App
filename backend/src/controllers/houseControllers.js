@@ -3,7 +3,7 @@ import xss from "xss";
 
 // ✅ SECURITY: Sanitize HTML content
 const sanitizeInput = (input) => {
-  if (typeof input === 'string') {
+  if (typeof input === "string") {
     return xss(input.trim());
   }
   return input;
@@ -36,9 +36,9 @@ export async function getHouses(req, res) {
     });
   } catch (error) {
     console.error("Error fetching houses:", error.message);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: "Error fetching houses" 
+      message: "Error fetching houses",
     });
   }
 }
@@ -47,17 +47,17 @@ export async function getHouseById(req, res) {
   try {
     // ✅ SECURITY: Validate ObjectId format
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({ 
+      return res.status(400).json({
         success: false,
-        message: "Invalid house ID format" 
+        message: "Invalid house ID format",
       });
     }
 
     const house = await House.findById(req.params.id).lean();
     if (!house) {
-      return res.status(404).json({ 
+      return res.status(404).json({
         success: false,
-        message: "House not found" 
+        message: "House not found",
       });
     }
 
@@ -67,9 +67,9 @@ export async function getHouseById(req, res) {
     });
   } catch (error) {
     console.error("Error fetching house:", error.message);
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: "Error fetching house" 
+      message: "Error fetching house",
     });
   }
 }
@@ -95,7 +95,8 @@ export async function createHouse(req, res) {
     if (!address || !city || !state || !price || !clerk_id) {
       return res.status(400).json({
         success: false,
-        message: "Missing required fields: address, city, state, price, clerk_id",
+        message:
+          "Missing required fields: address, city, state, price, clerk_id",
       });
     }
 
@@ -122,7 +123,11 @@ export async function createHouse(req, res) {
       });
     }
 
-    if (sanitizedData.year_built && (sanitizedData.year_built < 1800 || sanitizedData.year_built > new Date().getFullYear())) {
+    if (
+      sanitizedData.year_built &&
+      (sanitizedData.year_built < 1800 ||
+        sanitizedData.year_built > new Date().getFullYear())
+    ) {
       return res.status(400).json({
         success: false,
         message: "Invalid year built",
@@ -139,18 +144,18 @@ export async function createHouse(req, res) {
     });
   } catch (error) {
     console.error("Error creating house:", error.message);
-    
-    if (error.name === 'ValidationError') {
+
+    if (error.name === "ValidationError") {
       return res.status(400).json({
         success: false,
         message: "Validation error",
-        errors: Object.values(error.errors).map(e => e.message),
+        errors: Object.values(error.errors).map((e) => e.message),
       });
     }
 
-    res.status(500).json({ 
+    res.status(500).json({
       success: false,
-      message: "Error creating house" 
+      message: "Error creating house",
     });
   }
 }

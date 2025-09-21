@@ -2,10 +2,7 @@
 const nextConfig = {
   images: {
     unoptimized: true,
-    domains: [
-      "gateway.pinata.cloud",
-      "rose-tough-aardwolf-788.mypinata.cloud",
-    ],
+    domains: ["gateway.pinata.cloud", "rose-tough-aardwolf-788.mypinata.cloud"],
   },
   trailingSlash: true,
   eslint: {

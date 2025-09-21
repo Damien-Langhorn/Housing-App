@@ -11,7 +11,7 @@ export default function Home() {
           src="/Hero-Image.jpg"
           width={500}
           height={500}
-          alt="Box Office News"
+          alt="Dream house with beautiful architecture"
           priority
           className="rounded-lg shadow-2xl shadow-base-content lg:w-[50vw]"
         />

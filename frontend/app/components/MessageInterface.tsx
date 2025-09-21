@@ -135,11 +135,11 @@ const MessageInterface = ({
   return (
     <div className="flex flex-col h-[600px] border rounded-lg">
       {/* Header */}
-      <div className="p-4 border-b bg-gray-50">
+      <div className="p-4 border-b rounded-lg bg-neutral">
         <h3 className="font-semibold">
           Inquiry about: {house?.address}, {house?.city}
         </h3>
-        <p className="text-sm text-gray-600">${house?.price}</p>
+        <p className="text-sm ">${house?.price}</p>
       </div>
 
       {/* Messages */}

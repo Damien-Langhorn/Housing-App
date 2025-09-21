@@ -6,13 +6,13 @@ import Link from "next/link";
 
 const MessagesPage = () => {
   return (
-    <section className="min-h-screen bg-gray-50">
+    <section className="min-h-screen bg-black pb-8">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
-            <h1 className="text-3xl font-bold text-gray-900">Messages</h1>
-            <Link href="/houses" className="btn btn-primary btn-sm">
+            <h1 className="text-3xl font-bold">Messages</h1>
+            <Link href="/houses" className="btn btn-secondary btn-sm">
               Browse Houses
             </Link>
           </div>
@@ -22,11 +22,9 @@ const MessagesPage = () => {
         </div>
 
         {/* Conversations List */}
-        <div className="bg-white rounded-lg shadow-sm">
+        <div className="bg-neutral rounded-lg shadow-sm">
           <div className="p-4 border-b">
-            <h2 className="font-semibold text-gray-800">
-              Recent Conversations
-            </h2>
+            <h2 className="font-semibold">Recent Conversations</h2>
           </div>
           <div className="p-4">
             <ConversationsList />

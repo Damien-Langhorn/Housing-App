@@ -111,7 +111,7 @@ const ConversationsList = () => {
     if (userId) {
       fetchConversations();
     }
-  }, [userId, getToken, DATABASE_URL]);
+  }, [userId, getToken]);
 
   const fetchUnreadCounts = useCallback(async () => {
     try {
@@ -133,7 +133,7 @@ const ConversationsList = () => {
     } catch (error) {
       console.error("=== Error fetching unread counts:", error);
     }
-  }, [getToken, DATABASE_URL]);
+  }, [getToken]);
 
   // Refresh unread counts when component mounts
   useEffect(() => {
@@ -224,19 +224,6 @@ const ConversationsList = () => {
 
   return (
     <div className="space-y-4">
-      {/* Debug button to test unread count refresh */}
-      <button
-        onClick={fetchUnreadCounts}
-        className="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600"
-      >
-        🔄 Refresh Unread Counts (Debug)
-      </button>
-
-      {/* Debug display of unread counts */}
-      <div className="bg-gray-100 p-3 rounded text-xs">
-        <strong>Debug - Unread Counts:</strong> {JSON.stringify(unreadCounts)}
-      </div>
-
       {conversations.map((conversation) => {
         const otherUserId = getOtherParticipant(conversation.participants);
         const otherUserName = userNames[otherUserId] || "Unknown User";
@@ -249,7 +236,7 @@ const ConversationsList = () => {
             href={`/messages/${conversation.house_id._id}/${otherUserId}`}
             className="block"
           >
-            <div className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+            <div className="border rounded-lg p-4 hover:bg-accent transition-colors">
               <div className="flex items-center space-x-4">
                 {/* House Image */}
                 <div className="relative w-16 h-16 flex-shrink-0">
@@ -276,16 +263,16 @@ const ConversationsList = () => {
                           </span>
                         )}
                       </div>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs">
                         {conversation.house_id.address} •{" "}
                         {conversation.house_id.city},{" "}
                         {conversation.house_id.state}
                       </p>
-                      <p className="text-xs text-gray-500">
+                      <p className="text-xs ">
                         ${conversation.house_id.price.toLocaleString()}
                       </p>
                     </div>
-                    <span className="text-xs text-gray-400 flex-shrink-0 ml-2">
+                    <span className="text-xs  flex-shrink-0 ml-2">
                       {formatTime(conversation.last_message_time)}
                     </span>
                   </div>
@@ -296,8 +283,8 @@ const ConversationsList = () => {
                       <p
                         className={`text-sm truncate ${
                           unreadCount > 0 && !isFromMe
-                            ? "font-semibold text-gray-900"
-                            : "text-gray-600"
+                            ? "font-semibold text-blue-500"
+                            : "text-white"
                         }`}
                       >
                         {isFromMe ? "You: " : `${otherUserName}: `}
@@ -310,7 +297,7 @@ const ConversationsList = () => {
                 {/* Arrow indicator */}
                 <div className="flex-shrink-0">
                   <svg
-                    className="w-5 h-5 text-gray-400"
+                    className="w-5 h-5 "
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"

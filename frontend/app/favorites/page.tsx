@@ -101,7 +101,7 @@ const FavoritesPage = () => {
           <p className="text-gray-600 mb-4">
             Please sign in to view your favorite houses.
           </p>
-          <Link href="/houses" className="btn btn-primary">
+          <Link href="/houses" className="btn btn-outline">
             Browse Houses
           </Link>
         </div>
@@ -129,7 +129,7 @@ const FavoritesPage = () => {
           <button onClick={fetchFavorites} className="btn btn-primary mr-4">
             Try Again
           </button>
-          <Link href="/houses" className="btn btn-outline">
+          <Link href="/houses" className="btn btn-primary">
             Browse Houses
           </Link>
         </div>
@@ -153,7 +153,6 @@ const FavoritesPage = () => {
           <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
-                <span className="text-2xl mr-2">❤️</span>
                 <div>
                   <h3 className="font-semibold text-blue-900">
                     {favorites.length} Favorite Home
@@ -164,12 +163,6 @@ const FavoritesPage = () => {
                   </p>
                 </div>
               </div>
-              <button
-                onClick={fetchFavorites}
-                className="btn btn-sm btn-outline"
-              >
-                🔄 Refresh
-              </button>
             </div>
           </div>
         )}
@@ -187,7 +180,7 @@ const FavoritesPage = () => {
               Start browsing houses and click the heart icon to save your
               favorites here for easy access later.
             </p>
-            <Link href="/houses" className="btn btn-primary">
+            <Link href="/houses" className="btn btn-neutral">
               🏠 Browse Houses
             </Link>
           </div>
@@ -214,16 +207,13 @@ const FavoritesPage = () => {
         {/* Quick Actions */}
         {favorites.length > 0 && (
           <div className="mt-12 text-center">
-            <div className="bg-gray-50 rounded-lg p-6">
+            <div className="bg-neutral rounded-lg p-6">
               <h3 className="font-semibold mb-4">
                 Ready to take the next step?
               </h3>
               <div className="flex justify-center gap-4">
                 <Link href="/houses" className="btn btn-outline">
-                  🔍 Browse More Houses
-                </Link>
-                <Link href="/messages" className="btn btn-primary">
-                  💬 Contact Sellers
+                  Browse More Houses
                 </Link>
               </div>
             </div>

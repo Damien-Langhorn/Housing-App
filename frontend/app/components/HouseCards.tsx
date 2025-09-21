@@ -33,6 +33,9 @@ const HouseCards = ({ house, onFavoriteToggle }: HouseCardsProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const DATABASE_URL = process.env.NEXT_PUBLIC_DATABASE_URL;
 
+  const isOwner =
+    userId && (house.clerk_id === userId || house.user_id === userId);
+
   // Update local state when house prop changes
   useEffect(() => {
     setIsFavorited(house.isFavorited || false);
@@ -90,36 +93,39 @@ const HouseCards = ({ house, onFavoriteToggle }: HouseCardsProps) => {
     <div className="flex justify-center items-center p-4">
       <div className="card bg-base-100 w-96 shadow-sm relative">
         {/* ✅ ADD: Favorite Heart Button */}
-        <button
-          onClick={handleFavoriteClick}
-          disabled={isLoading}
-          className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-200 ${
-            isLoading
-              ? "opacity-50 cursor-not-allowed"
-              : "hover:bg-white/80 hover:scale-110"
-          }`}
-          aria-label={
-            isFavorited ? "Remove from favorites" : "Add to favorites"
-          }
-        >
-          {/* Heart Icon */}
-          <svg
-            className={`w-6 h-6 transition-colors duration-200 ${
-              isFavorited
-                ? "text-red-500 fill-current"
-                : "text-white stroke-current fill-none hover:text-red-500"
+        {!isOwner && userId && (
+          <button
+            onClick={handleFavoriteClick}
+            disabled={isLoading}
+            className={`absolute top-4 right-4 z-10 p-2 rounded-full transition-all duration-200 ${
+              isLoading
+                ? "opacity-50 cursor-not-allowed"
+                : "hover:bg-white/80 hover:scale-110"
             }`}
-            viewBox="0 0 24 24"
-            strokeWidth={2}
+            aria-label={
+              isFavorited ? "Remove from favorites" : "Add to favorites"
+            }
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
-            />
-          </svg>
-        </button>
+            {/* Heart Icon */}
+            <svg
+              className={`w-6 h-6 transition-colors duration-200 ${
+                isFavorited
+                  ? "text-red-500 fill-current"
+                  : "text-red-500 stroke-current fill-none hover:text-red-500"
+              }`}
+              viewBox="0 0 24 24"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+              />
+            </svg>
+          </button>
+        )}
 
+        {/* House Image and Details */}
         <Link href={`/houses/${house._id}`}>
           <Image
             src={house.image}

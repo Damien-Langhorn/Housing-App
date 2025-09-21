@@ -141,12 +141,12 @@ const Page = () => {
     setSortBy(newSort);
   };
 
-  // ✅ ADD: Search handler - this will connect to your existing search bar
+  // Search handler - this will connect to your existing search bar
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
   };
 
-  // ✅ ADD: Clear search function
+  // Clear search function
   const clearSearch = () => {
     setSearchQuery("");
   };
@@ -178,7 +178,7 @@ const Page = () => {
           />
         </div>
 
-        {/* ✅ ADD: Search results info (optional) */}
+        {/*Search results info */}
         {searchQuery && (
           <div className="text-center mb-4">
             <p className="text-sm text-gray-600">
@@ -192,7 +192,7 @@ const Page = () => {
                   {searchQuery && (
                     <button
                       onClick={clearSearch}
-                      className="ml-2 text-accent hover:text-neutral-content underline text-sm"
+                      className="ml-2 text-white hover:text-neutral-content underline text-sm"
                     >
                       Clear search
                     </button>
@@ -256,7 +256,7 @@ const Page = () => {
                   Try different keywords or{" "}
                   <button
                     onClick={clearSearch}
-                    className="text-accent hover:text-neutral-content underline"
+                    className="text-white hover:text-neutral-content underline"
                   >
                     clear your search
                   </button>

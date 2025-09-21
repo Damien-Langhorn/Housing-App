@@ -147,7 +147,7 @@ const Page = () => {
   return (
     <section className="min-h-screen flex justify-center overflow-hidden flex-col items-center">
       <div className="container flex flex-col md:flex-row justify-evenly items-center">
-        <div className="flex justify-center items-center text-center w-[50vw] my-4 md:mx-4">
+        <div className="flex justify-center items-center text-center w-[80vw] sm:w-[50vw] my-4 md:mx-4">
           <Image
             width={500}
             height={500}
@@ -156,7 +156,7 @@ const Page = () => {
             className="w-full h-96 object-cover rounded-lg shadow-lg"
           />
         </div>
-        <div className="flex flex-col justify-center text-left">
+        <div className="flex flex-col items-start">
           <h2 className="text-2xl font-bold mb-4">
             {house.city}, {house.state}
           </h2>
@@ -194,13 +194,13 @@ const Page = () => {
         ) : (
           // Show contact seller for other users
           <div>
-            <p>
+            <p className="text-gray-600 text-center text-balance px-4">
               Please contact the seller below if you are interested in this
               house.
             </p>
             <button
               onClick={handleContactSeller}
-              className="btn btn-accent mt-4"
+              className="btn btn-neutral mt-4"
             >
               Contact Seller
             </button>

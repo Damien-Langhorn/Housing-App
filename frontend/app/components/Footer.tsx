@@ -18,7 +18,7 @@ const Footer = () => {
         <p>
           Dream Homes LLC.
           <br />
-          Providing affordable housing since 2012
+          Providing affordable housing since 1930
         </p>
       </aside>
       <nav>

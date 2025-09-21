@@ -7,14 +7,33 @@ import {
   getHouseById,
 } from "../controllers/houseControllers.js";
 import { requireAuth } from "../middleware/clerk.js";
+import { validateHouse } from "../middleware/validation.js";
+import { uploadRateLimit } from "../middleware/rateLimiter.js";
 
 const router = express.Router();
 
-// Define routes for houses
+// ✅ SECURITY: Public routes (read-only)
 router.get("/", getHouses);
-router.get("/:id", getHouseById); // Assuming you want to fetch a specific house by ID
-router.post("/", requireAuth, createHouse);
-router.put("/:id", requireAuth, updateHouse);
-router.delete("/:id", requireAuth, deleteHouse);
+router.get("/:id", getHouseById);
+
+// ✅ SECURITY: Protected routes with validation and rate limiting
+router.post("/", 
+  uploadRateLimit, 
+  requireAuth, 
+  validateHouse, 
+  createHouse
+);
+
+router.put("/:id", 
+  uploadRateLimit, 
+  requireAuth, 
+  validateHouse, 
+  updateHouse
+);
+
+router.delete("/:id", 
+  requireAuth, 
+  deleteHouse
+);
 
 export default router;

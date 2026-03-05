@@ -11,9 +11,28 @@ const sanitizeInput = (input) => {
 
 export async function getHouses(req, res) {
   try {
-    // ✅ Add pagination for large datasets
+    // ✅ Add pagination for large datasets, with "all" option
     const page = Math.max(1, parseInt(req.query.page) || 1);
-    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit) || 20));
+    const rawLimit = req.query.limit;
+
+    // Special case: limit=all returns all houses without pagination
+    if (rawLimit === "all") {
+      const houses = await House.find().sort({ createdAt: -1 }).lean();
+      const total = houses.length;
+
+      return res.status(200).json({
+        success: true,
+        data: houses,
+        pagination: {
+          page: 1,
+          limit: total,
+          total,
+          pages: 1,
+        },
+      });
+    }
+
+    const limit = Math.min(50, Math.max(1, parseInt(rawLimit) || 20));
     const skip = (page - 1) * limit;
 
     const houses = await House.find()
@@ -188,7 +207,7 @@ export async function updateHouse(req, res) {
         year_built,
         image,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updatedHouse) {

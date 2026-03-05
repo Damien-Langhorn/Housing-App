@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import HouseCards from "../components/HouseCards";
 import { useAuth } from "@clerk/nextjs";
 import AddHouseModal from "../components/AddHouseModal";
-import { uploadToPinata } from "../utilis/pinata";
+import { uploadToPinata } from "../utils/pinata";
 import type { House } from "@/app/components/HouseCards";
 
 const Page = () => {
@@ -15,16 +15,32 @@ const Page = () => {
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
   useEffect(() => {
-    if (!userId) setLoading(false);
-
     const getUserHouses = async () => {
       try {
-        const res = await axios.get(
-          `${BACKEND_URL}/api/users/${userId}/houses`
+        if (!userId) {
+          setLoading(false);
+          return;
+        }
+
+        const res = await axios.get(`${BACKEND_URL}/api/houses`, {
+          params: { limit: "all" },
+        });
+        console.log("User houses fetched successfully:", res.data);
+
+        // Normalize API response shape
+        const apiData = res.data;
+        const allHouses = Array.isArray(apiData)
+          ? apiData
+          : Array.isArray(apiData?.data)
+            ? apiData.data
+            : [];
+
+        // Filter houses belonging to the current user
+        const userHouses = allHouses.filter(
+          (house: House) => house.clerk_id === userId,
         );
-        console.log("Houses fetched successfully:", res.data);
-        // You can process the fetched data here
-        setHouses(res.data);
+
+        setHouses(userHouses);
       } catch (error) {
         console.error("Error fetching houses:", error);
       } finally {
@@ -78,7 +94,8 @@ const Page = () => {
       });
 
       console.log("House added successfully:", res.data);
-      setHouses((prevHouses) => [...prevHouses, res.data]);
+      const created = (res.data && (res.data as any).data) || res.data;
+      setHouses((prevHouses) => [...prevHouses, created as House]);
       setIsModalOpen(false);
     } catch (error) {
       console.error("Error adding house:", error);

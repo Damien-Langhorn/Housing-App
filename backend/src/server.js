@@ -55,17 +55,31 @@ app.use(
   cors({
     origin: function (origin, callback) {
       // ✅ Allow requests with no origin (mobile apps, curl, etc.)
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
+      if (!origin) {
+        return callback(null, true);
       }
+
+      // ✅ In development, allow any localhost origin (e.g. different ports)
+      if (
+        process.env.NODE_ENV !== "production" &&
+        (origin.startsWith("http://localhost") ||
+          origin.startsWith("https://localhost"))
+      ) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.warn("Blocked CORS origin:", origin);
+      return callback(new Error("Not allowed by CORS"));
     },
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization", "Accept"],
     maxAge: 86400, // 24 hours
-  })
+  }),
 );
 
 // ✅ SECURITY: Raw body parser for webhooks (before express.json)
@@ -73,7 +87,7 @@ app.use(
   "/api/webhooks",
   express.raw({ type: "application/json", limit: "1mb" }),
   authRateLimit,
-  webhookRouter
+  webhookRouter,
 );
 
 // ✅ SECURITY: JSON body parser with size limit
@@ -81,7 +95,7 @@ app.use(
   express.json({
     limit: "10mb",
     type: "application/json",
-  })
+  }),
 );
 
 // ✅ SECURITY: URL-encoded parser with size limit
@@ -89,7 +103,7 @@ app.use(
   express.urlencoded({
     extended: true,
     limit: "10mb",
-  })
+  }),
 );
 
 // ✅ SECURITY: Apply rate limiting to routes

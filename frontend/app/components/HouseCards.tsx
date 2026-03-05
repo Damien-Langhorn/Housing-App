@@ -64,7 +64,7 @@ const HouseCards = ({ house, onFavoriteToggle }: HouseCardsProps) => {
         await axios.post(
           `${BACKEND_URL}/api/favorites`,
           { house_id: house._id },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
         console.log("✅ House added to favorites:", house._id);
       } else {
@@ -126,15 +126,17 @@ const HouseCards = ({ house, onFavoriteToggle }: HouseCardsProps) => {
         )}
 
         {/* House Image and Details */}
-        <Link href={`/houses/${house._id}`}>
-          <Image
-            src={house.image}
-            width={500}
-            height={500}
-            alt="House Image"
-            className="w-full h-64 object-cover rounded-lg shadow-lg"
-          />
-        </Link>
+        {house.image && house.image.trim() !== "" ? (
+          <Link href={`/houses/${house._id}`}>
+            <Image
+              src={house.image}
+              width={500}
+              height={500}
+              alt="House Image"
+              className="w-full h-64 object-cover rounded-lg shadow-lg"
+            />
+          </Link>
+        ) : null}
 
         <div className="card-body">
           <h2 className="card-title">

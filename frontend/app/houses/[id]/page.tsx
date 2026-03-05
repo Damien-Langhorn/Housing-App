@@ -24,7 +24,11 @@ const Page = () => {
       try {
         const res = await axios.get(`${BACKEND_URL}/api/houses/${id}`);
         console.log("House fetched successfully:", res.data);
-        setHouse(res.data);
+
+        const apiData = res.data;
+        const houseData = (apiData && (apiData as any).data) || apiData;
+
+        setHouse(houseData as House);
       } catch (error) {
         console.error("Error fetching house:", error);
       } finally {
@@ -85,7 +89,7 @@ const Page = () => {
             Authorization: `Bearer ${token}`,
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       // Refresh house data
@@ -148,13 +152,15 @@ const Page = () => {
     <section className="min-h-screen flex justify-center overflow-hidden flex-col items-center">
       <div className="container flex flex-col md:flex-row justify-evenly items-center">
         <div className="flex justify-center items-center text-center w-[80vw] sm:w-[50vw] my-4 md:mx-4">
-          <Image
-            width={500}
-            height={500}
-            src={house.image}
-            alt="House Image"
-            className="w-full h-96 object-cover rounded-lg shadow-lg"
-          />
+          {house.image && house.image.trim() !== "" ? (
+            <Image
+              width={500}
+              height={500}
+              src={house.image}
+              alt="House Image"
+              className="w-full h-96 object-cover rounded-lg shadow-lg"
+            />
+          ) : null}
         </div>
         <div className="flex flex-col items-start">
           <h2 className="text-2xl font-bold mb-4">

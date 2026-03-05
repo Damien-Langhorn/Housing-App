@@ -31,7 +31,7 @@ const ConversationsList = () => {
   const [conversations, setConversations] = useState<Conversation[]>([]);
   const [loading, setLoading] = useState(true);
   const [unreadCounts, setUnreadCounts] = useState<{ [key: string]: number }>(
-    {}
+    {},
   );
   const [userNames, setUserNames] = useState<{ [key: string]: string }>({});
   const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL;
@@ -49,7 +49,7 @@ const ConversationsList = () => {
               `${BACKEND_URL}/api/users/clerk/${id}`,
               {
                 headers: { Authorization: `Bearer ${token}` },
-              }
+              },
             );
             console.log(`User data received for ${id}:`, response.data);
             return {
@@ -68,10 +68,13 @@ const ConversationsList = () => {
 
         const results = await Promise.all(promises);
         console.log("=== All user fetch results:", results);
-        const nameMap = results.reduce((acc, { id, username }) => {
-          acc[id] = username;
-          return acc;
-        }, {} as { [key: string]: string });
+        const nameMap = results.reduce(
+          (acc, { id, username }) => {
+            acc[id] = username;
+            return acc;
+          },
+          {} as { [key: string]: string },
+        );
 
         console.log("=== Username map being set:", nameMap);
         setUserNames((prev) => ({ ...prev, ...nameMap }));
@@ -87,15 +90,15 @@ const ConversationsList = () => {
           `${BACKEND_URL}/api/messages/conversations`,
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
         setConversations(response.data);
 
         const allUserIds: string[] = response.data.flatMap(
-          (conv: Conversation) => conv.participants
+          (conv: Conversation) => conv.participants,
         );
         const uniqueUserIds = [...new Set(allUserIds)].filter(
-          (id) => id !== userId
+          (id) => id !== userId,
         );
 
         if (uniqueUserIds.length > 0) {
@@ -119,12 +122,12 @@ const ConversationsList = () => {
       const token = await getToken();
       console.log(
         "=== Token obtained, making request to:",
-        `${BACKEND_URL}/api/messages/unread-counts`
+        `${BACKEND_URL}/api/messages/unread-counts`,
       );
 
       const response = await axios.get(
         `${BACKEND_URL}/api/messages/unread-counts`,
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
 
       console.log("=== Unread counts response status:", response.status);
@@ -240,12 +243,15 @@ const ConversationsList = () => {
               <div className="flex items-center space-x-4">
                 {/* House Image */}
                 <div className="relative w-16 h-16 flex-shrink-0">
-                  <Image
-                    src={conversation.house_id.image}
-                    alt="House"
-                    fill
-                    className="object-cover rounded-lg"
-                  />
+                  {conversation.house_id?.image &&
+                  conversation.house_id.image.trim() !== "" ? (
+                    <Image
+                      src={conversation.house_id.image}
+                      alt="House"
+                      fill
+                      className="object-cover rounded-lg"
+                    />
+                  ) : null}
                 </div>
 
                 {/* Conversation Details */}

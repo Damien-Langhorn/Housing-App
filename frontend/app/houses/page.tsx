@@ -30,9 +30,20 @@ const Page = () => {
     const getHouses = async () => {
       try {
         console.log("Fetching houses from:", BACKEND_URL);
-        const res = await axios.get(`${BACKEND_URL}/api/houses`);
+        const res = await axios.get(`${BACKEND_URL}/api/houses`, {
+          params: { limit: "all" },
+        });
         console.log("Houses fetched successfully:", res.data);
-        setHouses(res.data);
+
+        // Ensure we always store an array of houses in state
+        const apiData = res.data;
+        const list = Array.isArray(apiData)
+          ? apiData
+          : Array.isArray(apiData?.data)
+            ? apiData.data
+            : [];
+
+        setHouses(list);
       } catch (error) {
         console.error("Error fetching houses:", error);
       } finally {
@@ -44,7 +55,7 @@ const Page = () => {
 
   const sortHouses = (
     housesToSort: House[],
-    sortOption: SortOption
+    sortOption: SortOption,
   ): House[] => {
     const sorted = [...housesToSort];
 
@@ -53,14 +64,14 @@ const Page = () => {
         return sorted.sort(
           (a, b) =>
             new Date(b.createdAt || 0).getTime() -
-            new Date(a.createdAt || 0).getTime()
+            new Date(a.createdAt || 0).getTime(),
         );
 
       case "oldest":
         return sorted.sort(
           (a, b) =>
             new Date(a.createdAt || 0).getTime() -
-            new Date(b.createdAt || 0).getTime()
+            new Date(b.createdAt || 0).getTime(),
         );
 
       case "price-low":
@@ -71,22 +82,22 @@ const Page = () => {
 
       case "bedrooms":
         return sorted.sort(
-          (a, b) => Number(b.bedrooms || 0) - Number(a.bedrooms || 0)
+          (a, b) => Number(b.bedrooms || 0) - Number(a.bedrooms || 0),
         );
 
       case "bathrooms":
         return sorted.sort(
-          (a, b) => Number(b.bathrooms || 0) - Number(a.bathrooms || 0)
+          (a, b) => Number(b.bathrooms || 0) - Number(a.bathrooms || 0),
         );
 
       case "sqft-large":
         return sorted.sort(
-          (a, b) => Number(b.square_feet || 0) - Number(a.square_feet || 0)
+          (a, b) => Number(b.square_feet || 0) - Number(a.square_feet || 0),
         );
 
       case "sqft-small":
         return sorted.sort(
-          (a, b) => Number(a.square_feet || 0) - Number(b.square_feet || 0)
+          (a, b) => Number(a.square_feet || 0) - Number(b.square_feet || 0),
         );
 
       default:
@@ -122,9 +133,8 @@ const Page = () => {
 
   // ✅ UPDATED: Filter by user, then search, then sort
   const filteredHouses = useMemo(() => {
-    return userId
-      ? houses.filter((house) => house.clerk_id !== userId)
-      : houses;
+    const list = Array.isArray(houses) ? houses : [];
+    return userId ? list.filter((house) => house.clerk_id !== userId) : list;
   }, [houses, userId]);
 
   // ✅ ADD: Apply search to filtered houses

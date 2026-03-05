@@ -44,7 +44,7 @@ const FavoritesPage = () => {
           ...favorite.house_id,
           isFavorited: true,
           favoritedAt: favorite.createdAt,
-        })
+        }),
       );
 
       setFavorites(favoritedHouses);
@@ -55,7 +55,7 @@ const FavoritesPage = () => {
     } finally {
       setLoading(false);
     }
-  }, [userId, getToken]);
+  }, [userId, getToken, BACKEND_URL]);
 
   useEffect(() => {
     fetchFavorites();
@@ -63,7 +63,7 @@ const FavoritesPage = () => {
 
   const handleFavoriteToggle = async (
     houseId: string,
-    isFavorited: boolean
+    isFavorited: boolean,
   ) => {
     if (!userId) return;
 
@@ -75,7 +75,7 @@ const FavoritesPage = () => {
         await axios.post(
           `${BACKEND_URL}/api/favorites`,
           { house_id: houseId },
-          { headers: { Authorization: `Bearer ${token}` } }
+          { headers: { Authorization: `Bearer ${token}` } },
         );
       } else {
         // Remove from favorites

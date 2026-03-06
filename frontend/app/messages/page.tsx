@@ -3,8 +3,27 @@
 import React from "react";
 import ConversationsList from "../components/ConversationList";
 import Link from "next/link";
+import { useAuth } from "@clerk/nextjs";
 
 const MessagesPage = () => {
+  const { userId } = useAuth();
+
+  if (!userId) {
+    return (
+      <section className="min-h-screen flex items-center justify-center bg-black">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold mb-4">Sign In Required</h1>
+          <p className="text-gray-400 mb-4">
+            Please sign in to view your messages.
+          </p>
+          <Link href="/houses" className="btn btn-outline btn-sm">
+            Browse Houses
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="min-h-screen bg-black pb-8">
       <div className="container mx-auto px-4 py-8 max-w-4xl">

@@ -44,11 +44,13 @@ setupSecurity(app);
 app.use(globalRateLimit);
 
 // ✅ SECURITY: Enhanced CORS configuration
+// Include local development, configured frontend URL, and deployed Vercel domain
 const allowedOrigins = [
   "http://localhost:3000",
   "https://localhost:3000",
   process.env.FRONTEND_URL,
   process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`,
+  "https://dreamhomesllc.vercel.app",
 ].filter(Boolean);
 
 app.use(

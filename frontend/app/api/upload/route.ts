@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
         { error: "Only image files are allowed" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -33,10 +33,7 @@ export async function POST(request: NextRequest) {
     const token = await getToken();
 
     if (!token) {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 },
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
     const backendFormData = new FormData();
@@ -51,7 +48,7 @@ export async function POST(request: NextRequest) {
           "X-User-ID": user.id,
         },
         body: backendFormData,
-      }
+      },
     );
 
     if (!response.ok) {

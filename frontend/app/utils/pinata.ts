@@ -38,10 +38,6 @@ export async function uploadToPinata(file: File): Promise<string> {
   uploadFormData.append("file", file);
 
   try {
-    if (!GATEWAY_URL) {
-      throw new Error("Pinata gateway URL missing");
-    }
-
     const response = await fetch("/api/upload", {
       method: "POST",
       body: uploadFormData,
@@ -59,16 +55,28 @@ export async function uploadToPinata(file: File): Promise<string> {
 
     const result = await response.json();
 
-    if (!result.success || !result.data?.IpfsHash) {
-      throw new Error(
-        result.message || "Upload failed - no IPFS hash returned",
-      );
+    // Backend /api/upload responds with:
+    // { success: true, ipfsUrl, ipfsHash }
+    if (!result.success) {
+      throw new Error(result.message || "Upload failed");
     }
 
-    const imageUrl = `https://${GATEWAY_URL}/ipfs/${result.data.IpfsHash}`;
-    console.log("File uploaded successfully:", imageUrl);
+    const ipfsHash: string | undefined =
+      result.ipfsHash || result.data?.IpfsHash || result.data?.ipfsHash;
 
-    return imageUrl;
+    const ipfsUrl: string | undefined =
+      result.ipfsUrl ||
+      (ipfsHash && GATEWAY_URL
+        ? `https://${GATEWAY_URL}/ipfs/${ipfsHash}`
+        : undefined);
+
+    if (!ipfsHash || !ipfsUrl) {
+      throw new Error("Upload failed - no IPFS hash or URL returned");
+    }
+
+    console.log("File uploaded successfully:", ipfsUrl);
+
+    return ipfsUrl;
   } catch (error) {
     console.error("Upload error:", error);
     throw error instanceof Error ? error : new Error("Failed to upload file");

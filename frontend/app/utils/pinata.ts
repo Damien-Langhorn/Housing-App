@@ -44,13 +44,26 @@ export async function uploadToPinata(file: File): Promise<string> {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
+      let errorBody: any = null;
+      try {
+        const text = await response.text();
+        errorBody = text ? JSON.parse(text) : null;
+      } catch {
+        // ignore JSON parse errors, keep raw text
+      }
+
       console.error("Upload API Error:", {
         status: response.status,
         statusText: response.statusText,
-        error: errorText,
+        body: errorBody,
       });
-      throw new Error(`Upload failed: ${response.statusText}`);
+
+      const message =
+        (errorBody && (errorBody.error || errorBody.message)) ||
+        response.statusText ||
+        "Unknown upload error";
+
+      throw new Error(`Upload failed: ${message}`);
     }
 
     const result = await response.json();

@@ -1,4 +1,4 @@
-import { currentUser } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
@@ -29,6 +29,16 @@ export async function POST(request: NextRequest) {
     }
 
     // ✅ Forward to backend API for secure Pinata upload
+    const { getToken } = auth();
+    const token = await getToken();
+
+    if (!token) {
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 },
+      );
+    }
+
     const backendFormData = new FormData();
     backendFormData.append("file", file);
 
@@ -37,6 +47,7 @@ export async function POST(request: NextRequest) {
       {
         method: "POST",
         headers: {
+          Authorization: `Bearer ${token}`,
           "X-User-ID": user.id,
         },
         body: backendFormData,

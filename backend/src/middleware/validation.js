@@ -1,6 +1,6 @@
 import { body, validationResult } from "express-validator";
 
-// ✅ Validation middleware
+// ✅ Shared validation result handler
 export const validateInput = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -13,35 +13,46 @@ export const validateInput = (req, res, next) => {
   next();
 };
 
-// ✅ House validation rules
+// ✅ House validation rules (aligned with HouseListings schema)
 export const validateHouse = [
-  body("title")
+  body("address")
     .trim()
-    .isLength({ min: 3, max: 100 })
-    .withMessage("Title must be between 3-100 characters")
-    .escape(),
-  body("description")
+    .isLength({ min: 3, max: 200 })
+    .withMessage("Address must be between 3-200 characters"),
+  body("city")
     .trim()
-    .isLength({ min: 10, max: 1000 })
-    .withMessage("Description must be between 10-1000 characters")
-    .escape(),
+    .isLength({ min: 2, max: 100 })
+    .withMessage("City must be between 2-100 characters"),
+  body("state")
+    .trim()
+    .isLength({ min: 2, max: 100 })
+    .withMessage("State must be between 2-100 characters"),
+  body("postal_code")
+    .trim()
+    .isLength({ min: 3, max: 20 })
+    .withMessage("Postal code must be between 3-20 characters"),
   body("price")
     .isFloat({ min: 0 })
     .withMessage("Price must be a positive number"),
-  body("location")
-    .trim()
-    .isLength({ min: 3, max: 100 })
-    .withMessage("Location must be between 3-100 characters")
-    .escape(),
   body("bedrooms")
     .isInt({ min: 1, max: 20 })
     .withMessage("Bedrooms must be between 1-20"),
   body("bathrooms")
     .isFloat({ min: 1, max: 20 })
     .withMessage("Bathrooms must be between 1-20"),
-  body("area")
-    .isFloat({ min: 1 })
-    .withMessage("Area must be a positive number"),
+  body("square_feet")
+    .isInt({ min: 1 })
+    .withMessage("Square feet must be a positive number"),
+  body("year_built")
+    .isInt({ min: 1800, max: new Date().getFullYear() })
+    .withMessage("Year built must be a valid year"),
+  // clerk_id is required for createHouse (enforced in controller) but
+  // should not be required for updates, so keep it optional here.
+  body("clerk_id")
+    .optional()
+    .trim()
+    .isLength({ min: 1 })
+    .withMessage("clerk_id must be a non-empty string"),
   validateInput,
 ];
 

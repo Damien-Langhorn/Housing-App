@@ -8,7 +8,6 @@ import houseRoutes from "./routes/houseRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import favoriteRoutes from "./routes/favoriteRoutes.js";
-import uploadRoutes from "./routes/uploadRoutes.js";
 import webhookRouter from "./routes/webhook.js";
 
 // ✅ Import database config
@@ -114,7 +113,6 @@ app.use("/api/houses", apiRateLimit, houseRoutes);
 app.use("/api/users", apiRateLimit, userRoutes);
 app.use("/api/messages", apiRateLimit, messageRoutes);
 app.use("/api/favorites", apiRateLimit, favoriteRoutes);
-app.use("/api/upload", uploadRoutes);
 
 // ✅ Health check endpoint (no rate limiting)
 app.get("/health", (req, res) => {

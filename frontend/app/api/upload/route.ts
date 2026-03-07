@@ -1,5 +1,10 @@
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { currentUser } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
+
+// This route now uploads directly to Pinata.
+// Required env vars (server-side only, not NEXT_PUBLIC_):
+// - PINATA_JWT
+// - PINATA_GATEWAY_URL
 
 export async function POST(request: NextRequest) {
   try {
@@ -28,35 +33,49 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "File too large" }, { status: 400 });
     }
 
-    // ✅ Forward to backend API for secure Pinata upload
-    const { getToken } = auth();
-    const token = await getToken();
+    const PINATA_JWT = process.env.PINATA_JWT;
+    const GATEWAY_URL = process.env.PINATA_GATEWAY_URL;
 
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    if (!PINATA_JWT || !GATEWAY_URL) {
+      console.error("PINATA_JWT or PINATA_GATEWAY_URL not configured");
+      return NextResponse.json(
+        { error: "Upload service not configured" },
+        { status: 500 },
+      );
     }
 
-    const backendFormData = new FormData();
-    backendFormData.append("file", file);
+    const uploadFormData = new FormData();
+    uploadFormData.append("file", file);
 
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/upload`,
+    const pinataResponse = await fetch(
+      "https://api.pinata.cloud/pinning/pinFileToIPFS",
       {
         method: "POST",
         headers: {
-          Authorization: `Bearer ${token}`,
-          "X-User-ID": user.id,
+          Authorization: `Bearer ${PINATA_JWT}`,
         },
-        body: backendFormData,
+        body: uploadFormData,
       },
     );
 
-    if (!response.ok) {
-      throw new Error("Backend upload failed");
+    if (!pinataResponse.ok) {
+      const errorText = await pinataResponse.text();
+      console.error("Pinata upload failed:", errorText);
+      return NextResponse.json(
+        { error: "Failed to upload to IPFS" },
+        { status: 500 },
+      );
     }
 
-    const data = await response.json();
-    return NextResponse.json(data);
+    const pinataData = await pinataResponse.json();
+    const ipfsHash = pinataData.IpfsHash;
+    const ipfsUrl = `https://${GATEWAY_URL}/ipfs/${ipfsHash}`;
+
+    return NextResponse.json({
+      success: true,
+      ipfsUrl,
+      ipfsHash,
+    });
   } catch (error) {
     console.error("Upload error:", error);
     return NextResponse.json({ error: "Upload failed" }, { status: 500 });
